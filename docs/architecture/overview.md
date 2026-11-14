@@ -1,9 +1,7 @@
 # Architecture Overview
 
 Astra 2D is organized as a small set of independent modules that are wired
-together by a single `Engine` object. The engine owns the mechanisms (the frame
-loop, the scene stack, resources, input, audio, cameras, and rendering); your
-game owns the rules and the content.
+together by a single `Engine` object. The engine provides the mechanisms (the frame loop, the scene stack, resource management, input, audio, and rendering), while each scene manages its own cameras and world.
 
 This page explains how the modules relate to each other. It documents what the
 engine actually does today, so the module reference and the guides can build on a
@@ -85,6 +83,15 @@ The order inside `Engine:update` is significant:
 
 Input is cleared last on purpose: a scene reads `isJustPressed` while it runs,
 and the flag is discarded only after every scene has had the chance to react.
+
+On shutdown, `Engine:quit()` queues a scene stack clear and processes pending
+scene operations. Operations already in the queue run before the clear. The
+clear calls `onExit` only on the top scene, then calls `onDestroy` on every
+scene from top to bottom. Afterward, the engine shuts down audio and releases
+any remaining resources.
+
+These phases are not protected against errors: if one fails, later phases are
+not guaranteed to run.
 
 ## Module responsibilities
 

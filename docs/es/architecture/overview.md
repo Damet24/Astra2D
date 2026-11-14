@@ -1,9 +1,9 @@
 # Descripción general de la arquitectura
 
 Astra 2D está organizado como un conjunto pequeño de módulos independientes que
-se conectan mediante un único objeto `Engine`. El motor posee los mecanismos (el
+se conectan mediante un único objeto `Engine`. El motor provee los mecanismos (el
 bucle de frames, la pila de escenas, los recursos, la entrada, el audio, las
-cámaras y el renderizado); tu juego posee las reglas y el contenido.
+cámaras y el renderizado); mientras que cada escena adminsitra sus propias camaras y mundo.
 
 Esta página explica cómo se relacionan los módulos entre sí. Documenta lo que el
 motor hace realmente hoy, para que la referencia de módulos y las guías se
@@ -88,6 +88,15 @@ El orden dentro de `Engine:update` es importante:
 La entrada se limpia al final a propósito: una escena lee `isJustPressed` mientras
 se ejecuta, y el flag se descarta solo después de que todas las escenas hayan
 tenido la oportunidad de reaccionar.
+
+Al cerrar, `Engine:quit()` encola el vaciado de la pila de escenas y procesa las
+operaciones pendientes. Las operaciones que ya estaban en la cola se ejecutan
+antes del vaciado. Este llama a `onExit` solo en la escena superior y después a
+`onDestroy` en todas las escenas, de arriba hacia abajo. A continuación, el
+motor apaga el audio y libera los recursos restantes.
+
+Estas fases no están protegidas contra errores: si una falla, no se garantiza
+que se ejecuten las fases posteriores.
 
 ## Responsabilidades de los módulos
 
