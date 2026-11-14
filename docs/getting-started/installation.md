@@ -78,7 +78,7 @@ Include any other files the game uses (for example `conf.lua` or assets) at thei
 
 ## Licenses
 
-This checkout has no root README or license granting terms for the engine as a whole; do not assume that the documentation package's `package.json` license applies to the motor. Clarify permission with the project owner before redistributing it. Bundled libraries have their own notices, including `engine/lib/shove/LICENSE` and the notice in `engine/lib/hump/camera.lua`; retain and follow applicable third-party terms.
+This checkout has no root license granting terms for the engine as a whole; do not assume that the documentation package's `package.json` license applies to the motor. Clarify permission with the project owner before redistributing it. Bundled libraries have their own notices, including `engine/lib/shove/LICENSE` and the notice in `engine/lib/hump/camera.lua`; retain and follow applicable third-party terms.
 
 ## Troubleshooting
 

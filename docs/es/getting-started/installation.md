@@ -78,7 +78,7 @@ Incluye los demás archivos que use el juego (por ejemplo, `conf.lua` o assets) 
 
 ## Licencias
 
-Esta copia no contiene un README ni una licencia en la raíz que conceda términos para el motor en su conjunto; no supongas que la licencia del `package.json` de la documentación se aplica al motor. Consulta al propietario del proyecto antes de redistribuirlo. Las bibliotecas incluidas tienen sus propios avisos, entre ellos `engine/lib/shove/LICENSE` y el aviso en `engine/lib/hump/camera.lua`; conserva y cumple los términos de terceros aplicables.
+Esta copia no contiene una licencia en la raíz que conceda términos para el motor en su conjunto; no supongas que la licencia del `package.json` de la documentación se aplica al motor. Consulta al propietario del proyecto antes de redistribuirlo. Las bibliotecas incluidas tienen sus propios avisos, entre ellos `engine/lib/shove/LICENSE` y el aviso en `engine/lib/hump/camera.lua`; conserva y cumple los términos de terceros aplicables.
 
 ## Solución de problemas
 
