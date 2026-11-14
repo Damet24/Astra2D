@@ -48,6 +48,6 @@ Para usar el motor en otro proyecto LÖVE, copia `engine/` completo, incluido `e
 
 ## Licencias y créditos
 
-Este repositorio no incluye actualmente una licencia para el motor en su conjunto. Antes de redistribuirlo, consulta los permisos con el propietario del proyecto.
+El código propio de Astra 2D está disponible bajo la [licencia MIT](LICENSE).
 
-La cámara utiliza [HUMP](https://github.com/vrld/hump), de Matthias Richter, mediante un adaptador; su aviso de derechos y licencia está en `engine/lib/hump/camera.lua`. El viewport utiliza Shove, cuya licencia está en `engine/lib/shove/LICENSE`.
+La cámara utiliza [HUMP](https://github.com/vrld/hump), de Matthias Richter, mediante un adaptador; su aviso de derechos y licencia está en `engine/lib/hump/camera.lua`. El viewport utiliza Shove, cuya licencia está en `engine/lib/shove/LICENSE`. Las bibliotecas y los recursos de terceros pueden tener sus propios términos: consérvalos y verifica los permisos de los assets antes de redistribuirlos.
