@@ -19,7 +19,26 @@ const enSidebar = [
   },
   {
     text: "Architecture",
-    items: [{ text: "Overview", link: "/architecture/overview" }],
+    items: [
+      { text: "Overview", link: "/architecture/overview" },
+      {
+        text: "Modules",
+        collapsed: true,
+        items: [
+          { text: "Engine", link: "/architecture/modules/engine" },
+          { text: "GameContext", link: "/architecture/modules/game-context" },
+          { text: "SceneManager", link: "/architecture/modules/scene-manager" },
+          { text: "SceneLoader", link: "/architecture/modules/scene-loader" },
+          { text: "Scene", link: "/architecture/modules/scene" },
+          { text: "World", link: "/architecture/modules/world" },
+          { text: "ResourceManager", link: "/architecture/modules/resource-manager" },
+          { text: "InputManager", link: "/architecture/modules/input-manager" },
+          { text: "AudioManager", link: "/architecture/modules/audio-manager" },
+          { text: "CameraManager", link: "/architecture/modules/camera-manager" },
+          { text: "Rendering", link: "/architecture/modules/rendering" },
+        ],
+      },
+    ],
   },
   {
     text: "Guides",
@@ -50,7 +69,26 @@ const esSidebar = [
   },
   {
     text: "Arquitectura",
-    items: [{ text: "Descripción general", link: "/es/architecture/overview" }],
+    items: [
+      { text: "Descripción general", link: "/es/architecture/overview" },
+      {
+        text: "Módulos",
+        collapsed: true,
+        items: [
+          { text: "Engine", link: "/es/architecture/modules/engine" },
+          { text: "GameContext", link: "/es/architecture/modules/game-context" },
+          { text: "SceneManager", link: "/es/architecture/modules/scene-manager" },
+          { text: "SceneLoader", link: "/es/architecture/modules/scene-loader" },
+          { text: "Scene", link: "/es/architecture/modules/scene" },
+          { text: "World", link: "/es/architecture/modules/world" },
+          { text: "ResourceManager", link: "/es/architecture/modules/resource-manager" },
+          { text: "InputManager", link: "/es/architecture/modules/input-manager" },
+          { text: "AudioManager", link: "/es/architecture/modules/audio-manager" },
+          { text: "CameraManager", link: "/es/architecture/modules/camera-manager" },
+          { text: "Renderizado", link: "/es/architecture/modules/rendering" },
+        ],
+      },
+    ],
   },
   {
     text: "Guías",
