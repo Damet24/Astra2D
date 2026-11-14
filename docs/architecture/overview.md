@@ -98,8 +98,8 @@ not guaranteed to run.
 ## Module guides
 
 The following pages describe each module’s responsibilities, configuration,
-interfaces, and relationships. The API reference is a separate, future layer
-for quick lookup.
+interfaces, and relationships. The separate [API reference](/api/) provides
+method details for quick lookup.
 
 | Module | Role |
 | --- | --- |

@@ -47,7 +47,7 @@ entrada y assets. El motor solo necesita saber dónde están.
 
 | Concepto | Responsabilidad |
 | --- | --- |
-| `Engine` | Crea la ventana, el viewport, los gestores y la escena inicial. |
+| `Engine` | Crea los gestores y, al cargar, configura opcionalmente la ventana, prepara el viewport y carga la escena inicial. |
 | `GameContext` | Pasa servicios compartidos, como los gestores de recursos, escenas, entrada y audio, a las escenas. |
 | `SceneManager` | Mantiene la pila de escenas y procesa las transiciones. |
 | `Scene` | Coordina una parte autocontenida del juego, como un menú o un nivel. |
@@ -63,54 +63,18 @@ crean los servicios.
 
 ## El ciclo de vida de un frame
 
-Astra 2D no reemplaza el bucle principal de LÖVE. Tu `main.lua` crea un `Engine`
-y reenvía los callbacks que necesites:
+Astra 2D no reemplaza el bucle principal de LÖVE. Tu `main.lua` crea un `Engine` y le reenvía los callbacks de LÖVE. Para ver un punto de entrada y una escena completos, consulta [Tu primer proyecto](/es/getting-started/first-project).
 
-```lua
-local Engine = require("engine.engine")
+Al iniciar, `Engine:load()` configura opcionalmente la ventana, prepara el
+viewport de resolución lógica y apila la escena inicial.
 
-local engine = Engine.new({
-    initialScene = "mainMenu",
-    inputMaps = require("game.inputMaps"),
-    resourceDefinitions = require("game.resources.definitions"),
-    audio = { masterVolume = 1.0, musicVolume = 0.8, sfxVolume = 1.0 },
-})
+En cada frame, `Engine:update(dt)` actualiza las escenas seleccionadas, procesa
+las transiciones pendientes, actualiza el audio y limpia el estado transitorio
+de entrada. Después, `Engine:draw()` dibuja la pila de escenas dentro del
+viewport de resolución virtual.
 
-function love.load()
-    engine:load()
-end
-
-function love.update(dt)
-    engine:update(dt)
-end
-
-function love.draw()
-    engine:draw()
-end
-
-function love.keypressed(key)
-    engine:keypressed(key)
-end
-
-function love.keyreleased(key)
-    engine:keyreleased(key)
-end
-
-function love.quit()
-    engine:quit()
-end
-```
-
-Cuando el motor se ejecuta, cada frame sigue este orden:
-
-1. `Engine:load()` configura la ventana y la resolución lógica, crea el viewport
-   y apila la escena inicial.
-2. `Engine:update(dt)` actualiza las escenas activas, luego el audio y, por
-   último, el estado de entrada. Las transiciones de escena solicitadas durante
-   el frame se procesan al final de la actualización de escenas.
-3. `Engine:draw()` dibuja la pila de escenas dentro del viewport de resolución
-   virtual.
-4. `Engine:quit()` destruye las escenas, detiene el audio y libera los recursos.
+Al cerrar, `Engine:quit()` vacía las escenas, detiene el audio y libera los
+recursos restantes.
 
 El motor se construye sobre unos pocos principios:
 

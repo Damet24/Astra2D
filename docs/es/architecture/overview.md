@@ -101,8 +101,8 @@ que se ejecuten las fases posteriores.
 ## Guías de módulos
 
 Estas páginas describen las responsabilidades, la configuración, las interfaces
-y las relaciones de cada módulo. La referencia de API es una capa separada para
-consulta rápida que se desarrollará después.
+y las relaciones de cada módulo. La [referencia de API](/es/api/) ofrece una
+consulta rápida y separada de los métodos.
 
 | Módulo | Función |
 | --- | --- |

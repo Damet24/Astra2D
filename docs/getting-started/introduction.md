@@ -46,7 +46,7 @@ The engine only needs to know where those live.
 
 | Concept | Responsibility |
 | --- | --- |
-| `Engine` | Creates the window, viewport, managers, and initial scene. |
+| `Engine` | Creates managers and, when loaded, optionally configures the window, sets up the viewport, and loads the initial scene. |
 | `GameContext` | Passes shared services, such as the resource, scene, input, and audio managers, to scenes. |
 | `SceneManager` | Maintains the scene stack and processes transitions. |
 | `Scene` | Coordinates one self-contained part of the game, such as a menu or level. |
@@ -61,53 +61,17 @@ on game behavior and lets the engine control how services are created.
 
 ## The frame lifecycle
 
-Astra 2D does not replace LÖVE's main loop. Your `main.lua` creates an `Engine`
-and forwards the callbacks you need:
+Astra 2D does not replace LÖVE's main loop. Your `main.lua` creates an `Engine` and forwards the LÖVE callbacks to it. For a complete entry point and scene, see [Your First Project](/getting-started/first-project).
 
-```lua
-local Engine = require("engine.engine")
+At startup, `Engine:load()` optionally configures the window, sets up the
+logical-resolution viewport, and pushes the initial scene.
 
-local engine = Engine.new({
-    initialScene = "mainMenu",
-    inputMaps = require("game.inputMaps"),
-    resourceDefinitions = require("game.resources.definitions"),
-    audio = { masterVolume = 1.0, musicVolume = 0.8, sfxVolume = 1.0 },
-})
+During each frame, `Engine:update(dt)` updates the selected scenes, processes
+pending transitions, updates audio, and clears transient input state. Then
+`Engine:draw()` draws the scene stack inside the virtual-resolution viewport.
 
-function love.load()
-    engine:load()
-end
-
-function love.update(dt)
-    engine:update(dt)
-end
-
-function love.draw()
-    engine:draw()
-end
-
-function love.keypressed(key)
-    engine:keypressed(key)
-end
-
-function love.keyreleased(key)
-    engine:keyreleased(key)
-end
-
-function love.quit()
-    engine:quit()
-end
-```
-
-When the engine runs, each frame follows this order:
-
-1. `Engine:load()` configures the window and logical resolution, creates the
-   viewport, and pushes the initial scene.
-2. `Engine:update(dt)` updates the active scenes, then audio, then input state.
-   Scene transitions requested during the frame are processed at the end of the
-   scene update.
-3. `Engine:draw()` draws the scene stack inside the virtual-resolution viewport.
-4. `Engine:quit()` destroys scenes, stops audio, and releases resources.
+On shutdown, `Engine:quit()` clears the scenes, stops audio, and releases
+remaining resources.
 
 The engine is built around a few principles:
 

@@ -1,8 +1,6 @@
 # Your First Project
 
-This guide creates a minimal Astra 2D project: one scene, a few input actions, a
-movable square, and an image resource. It is a good place to start before adding
-levels, cameras, or a full ECS.
+This guide creates a minimal Astra 2D project: one scene, a few input actions, and a movable square. It needs no assets, cameras, or ECS. Install LÖVE 11.5 and obtain the engine source as described in [Installation](/getting-started/installation).
 
 ## Project structure
 
@@ -10,18 +8,15 @@ Create a folder for the game and copy the engine into it:
 
 ```text
 my-game/
-  engine/
+  engine/               # complete copy, including engine/lib/
   game/
     inputMaps.lua
-    resources/
-      definitions.lua
     scenes/
       hello.lua
   main.lua
 ```
 
-The folder must be named `engine`, because the engine modules import each other
-with the `engine.` prefix.
+The folder must be named `engine`, because the engine modules import each other with the `engine.` prefix. It must be inside the LÖVE game source directory, next to `main.lua`, including when [packaging a `.love` file](/getting-started/installation#package-the-game).
 
 ## 1. Configure the entry point
 
@@ -33,7 +28,7 @@ local Engine = require("engine.engine")
 local engine = Engine.new({
     initialScene = "hello",
     inputMaps = require("game.inputMaps"),
-    resourceDefinitions = require("game.resources.definitions"),
+
     audio = {
         masterVolume = 1.0,
         musicVolume = 0.8,
@@ -79,9 +74,7 @@ function love.quit()
 end
 ```
 
-The logical resolution is `320 x 180`, while the window is `960 x 540`. With
-`pixelPerfect = true`, the engine scales the game with nearest-neighbor filtering,
-so your scene can use small coordinates such as `(8, 8)`.
+The required `initialScene` and `inputMaps` are supplied here; `scenesPath` defaults to `game.scenes` and `resourceDefinitions` to `{}`. The logical resolution is `320 x 180`, while the window is `960 x 540`. With `pixelPerfect = true`, the engine uses integer scaling and nearest-neighbor filtering. See [Engine configuration](/getting-started/installation#engine-configuration) for all defaults.
 
 ## 2. Define input actions
 
@@ -101,8 +94,7 @@ same action cannot list the same key twice.
 
 ## 3. Create the first scene
 
-Create `game/scenes/hello.lua`. Scenes extend the engine's `Scene` class and
-receive a `GameContext` in their constructor:
+Create `game/scenes/hello.lua`. The default scene path and `initialScene = "hello"` resolve to this file. This scene extends the engine's `Scene` class and stores the `GameContext` passed to its constructor:
 
 ```lua
 local Scene = require("engine.scene.scene")
@@ -163,18 +155,10 @@ function Hello:draw()
     love.graphics.pop()
 end
 
-function Hello:onDestroy()
-    self.context.resourceManager:releaseAll(self)
-end
-
 return Hello
 ```
 
-Create `game/resources/definitions.lua` with an empty table for now:
-
-```lua
-return {}
-```
+No `onDestroy` override is needed here because this scene does not acquire resources. A scene that does should release them; see the [ResourceManager architecture](/architecture/modules/resource-manager).
 
 ## 4. Run the game
 
@@ -184,8 +168,7 @@ From the project root:
 love .
 ```
 
-You should see a `320 x 180` scene with instructions and a square that moves
-inside the screen.
+You should see a `320 x 180` logical scene with instructions and a square that moves with the arrow keys or WASD inside the screen. Close the window to run `engine:quit()`. To run from elsewhere, pass `my-game/` as the argument instead of `.`.
 
 ## What just happened?
 
@@ -209,62 +192,10 @@ manager update, after the current scene has finished updating.
 
 ## Next steps
 
-### Load an image resource
-
-Add an asset at `game/assets/player.png`, then register it:
-
-```lua
-return {
-    player = {
-        type = "image",
-        path = "game/assets/player.png",
-    },
-}
-```
-
-Load it in `onLoad` and draw it instead of the rectangle:
-
-```lua
-function Hello:onLoad()
-    self.width, self.height = self.context.viewport.getViewportDimensions()
-    self.image = self.context.resourceManager:get(self, "player")
-end
-
-function Hello:draw()
-    love.graphics.push("all")
-    love.graphics.draw(
-        self.image,
-        self.x - self.image:getWidth() / 2,
-        self.y - self.image:getHeight() / 2
-    )
-    love.graphics.pop()
-end
-```
-
-The scene is the consumer of the resource. `releaseAll(self)` in `onDestroy`
-informs the resource manager that the scene no longer needs it, and the resource
-is released when no other consumer needs it.
-
-### Add another scene
-
-Create `game/scenes/world.lua` with the same structure as `Hello`, then request
-a transition from the first scene:
-
-```lua
-if self.context.inputManager:isJustPressed("move_up") then
-    self.context.sceneManager:replace("world")
-end
-```
-
-`world` resolves to `game/scenes/world.lua` because the default `scenesPath` is
-`game.scenes`. Use `push` instead of `replace` when the current scene should stay
-in memory, for example to open a pause menu.
-
-### Explore the engine
-
-- [Introduction](/getting-started/introduction) for the engine's core concepts.
-- [Architecture overview](/architecture/overview) for how systems fit together.
-- [API reference](/api/) for module-level details.
+- [ResourceManager](/architecture/modules/resource-manager) explains defining, loading, and releasing resources.
+- [SceneManager](/architecture/modules/scene-manager) explains adding and transitioning between scenes.
+- [Architecture overview](/architecture/overview) shows how the systems fit together.
+- [Installation](/getting-started/installation#package-the-game) explains packaging the game and engine together.
 
 ## Common pitfalls
 
@@ -272,12 +203,9 @@ in memory, for example to open a pause menu.
   with a `new` constructor.
 - **The scene is not found.** Check the `initialScene` identifier and the
   `scenesPath` prefix. Dots map to folder separators.
-- **Resources are loaded in the constructor.** Load them in `onLoad`, where the
-  scene is ready and failures are easier to diagnose.
+
 - **Input does nothing.** Forward `love.keypressed` and `love.keyreleased` to the
   engine, and confirm the action name matches `game/inputMaps.lua`.
-- **A transition happens immediately.** Scene transitions are deferred until the
-  end of the scene manager update, which is intentional. Do not expect the scene
-  stack to change halfway through `update`.
+- **A transition is expected immediately.** Scene transitions requested during an update are deferred until the end of the scene manager update; do not expect the stack to change halfway through `update`.
 - **Resources stay loaded.** Release every consumer in `onDestroy` with
   `resourceManager:releaseAll(self)`.

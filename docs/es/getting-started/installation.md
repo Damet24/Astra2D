@@ -1,205 +1,92 @@
 # Instalación
 
-Astra 2D se ejecuta sobre [LÖVE](https://love2d.org/) y no requiere un paso de
-compilación aparte. Esta página cubre los requisitos, la ejecución del proyecto
-de ejemplo y cómo añadir el motor a un proyecto nuevo.
+Astra 2D se ejecuta como código fuente Lua dentro de un juego de [LÖVE](https://love2d.org/). Este repositorio no proporciona un paso de instalación como paquete.
 
 ## Requisitos
 
-- **LÖVE 11.5.** El proyecto está probado con esta versión. Otras versiones no
-  están verificadas.
-- **Git** (opcional). Puedes descargar el repositorio como un archivo en lugar de
-  clonarlo.
-- **Los archivos del repositorio.** Conserva `engine/lib/` junto al resto del
-  motor, porque el motor importa sus bibliotecas incluidas desde ahí.
+- **LÖVE 11.5**, la versión utilizada en esta guía. Aquí no se han verificado otras versiones. Instálalo desde [love2d.org](https://love2d.org/) y asegúrate de que el comando `love` esté disponible, o usa la ruta de tu ejecutable de LÖVE.
+- **El código fuente del repositorio**, incluido `engine/lib/` y, para el ejemplo, `game/` y sus assets. Git es opcional si descargas el repositorio como archivo comprimido.
 
-Lua viene incluido con LÖVE. No se necesita ningún gestor de paquetes ni módulos
-Lua adicionales.
+LÖVE incluye el entorno de ejecución de Lua. Las bibliotecas Lua del motor están incluidas en `engine/lib/`; los ejemplos no necesitan una instalación separada de Lua ni un gestor de paquetes.
 
 ## Ejecutar el proyecto de ejemplo
 
-Clona el repositorio e inicia LÖVE desde la raíz del proyecto:
+Clona la rama compatible `docs/vitepress-setup` y ejecuta LÖVE con la raíz del repositorio como fuente del juego:
 
 ```sh
-git clone https://github.com/Damet24/lua_engine.git
+git clone --branch docs/vitepress-setup https://github.com/Damet24/lua_engine.git
 cd lua_engine
 love .
 ```
 
-En Windows, también puedes arrastrar la carpeta del proyecto sobre el ejecutable
-de LÖVE, o añadir el directorio de instalación de LÖVE a tu `PATH` y ejecutar el
-mismo comando.
+La documentación y el código deben proceder de la misma revisión: el último commit de la rama puede cambiar y la documentación que estás leyendo puede no estar publicada todavía en la rama remota. Usa la revisión correspondiente a tu documentación, tanto con una copia de Git como al descargar un archivo comprimido; no supongas que un clon nuevo ya contiene estas páginas. Puedes comprobar una copia existente con `git rev-parse HEAD`.
 
-El ejemplo comienza en el menú principal. Sus atajos se definen en
-`game/inputMaps.lua`:
+En Windows también puedes arrastrar la carpeta del proyecto sobre el ejecutable de LÖVE. Si `love` no está en tu `PATH`, ejecuta el programa instalado con el directorio del proyecto como argumento.
 
-| Acción | Teclas por defecto |
-| --- | --- |
-| Aceptar | `Return` |
-| Pausa / retroceder | `Escape` |
-| Moverse a la izquierda | `Left`, `A` |
-| Moverse a la derecha | `Right`, `E` |
-| Saltar | `Space` |
-
-Pulsa `Return` para entrar al nivel, `Escape` para abrir el menú de pausa y las
-teclas de movimiento para controlar al jugador.
+El `main.lua` actual comienza directamente en `levels.level01`, no en el menú principal. Las teclas de `game/inputMaps.lua` incluyen flecha izquierda o `A` para ir a la izquierda, flecha derecha o `E` para ir a la derecha, `Space` para saltar y `Escape` para pausar. `Return` es la acción de aceptar del menú.
 
 ## Usar el motor en otro proyecto
 
-1. Copia la carpeta `engine/` en la raíz de tu proyecto LÖVE. Conserva el nombre
-   de la carpeta como `engine`, porque todos los módulos del motor se importan
-   con el prefijo `engine.`.
+Copia el directorio completo `engine/`, incluido `engine/lib/`, al **directorio fuente del juego** junto a `main.lua`. Conserva el nombre `engine`: sus módulos se importan entre sí con el prefijo `engine.`. El sistema de archivos virtual de LÖVE debe poder leer esos archivos; un directorio hermano fuera de la fuente del juego o una ruta Lua local no constituyen una instalación portable.
 
-   ```text
-   my-game/
-     engine/
-       engine.lua
-       lib/
-       ...
-     game/
-       inputMaps.lua
-       resources/
-       scenes/
-     main.lua
-   ```
+La estructura más pequeña que se usa en [Tu primer proyecto](/es/getting-started/first-project) es:
 
-2. Crea los módulos de juego que el motor necesita. Como mínimo, proporciona una
-   tabla de mapas de entrada, una tabla de definiciones de recursos y una escena
-   inicial.
+```text
+my-game/                  # fuente del juego LÖVE
+  main.lua
+  engine/                 # copia completa, incluido engine/lib/
+  game/
+    inputMaps.lua
+    scenes/
+      hello.lua
+```
 
-3. Crea `main.lua` y reenvía los callbacks de LÖVE al motor:
+La guía proporciona todos los archivos necesarios para esta estructura. Un archivo de definiciones de recursos es opcional; el ejemplo no necesita assets. Ejecuta `love .` desde `my-game/`, o pasa ese directorio a LÖVE desde otra ubicación.
 
-   ```lua
-   local Engine = require("engine.engine")
+## Configuración del motor
 
-   local engine = Engine.new({
-       initialScene = "hello",
-       scenesPath = "game.scenes",
-       inputMaps = require("game.inputMaps"),
-       resourceDefinitions = require("game.resources.definitions"),
-       audio = {
-           masterVolume = 0.1,
-           musicVolume = 0.8,
-           sfxVolume = 1.0,
-       },
-       window = {
-           width = 960,
-           height = 540,
-           fullscreen = false,
-           resizable = true,
-           vsync = true,
-       },
-       rendering = {
-           width = 320,
-           height = 180,
-           pixelPerfect = true,
-           backgroundColor = { 0.18, 0.25, 0.34 },
-       },
-   })
+`Engine.new(config)` construye los servicios; no carga la escena. Los campos obligatorios son `initialScene`, una cadena no vacía, e `inputMaps`, una tabla de acciones (puede ser `{}`). Los demás campos son opcionales:
 
-   function love.load()
-       engine:load()
-   end
-
-   function love.update(dt)
-       engine:update(dt)
-   end
-
-   function love.draw()
-       engine:draw()
-   end
-
-   function love.keypressed(key)
-       engine:keypressed(key)
-   end
-
-   function love.keyreleased(key)
-       engine:keyreleased(key)
-   end
-
-   function love.quit()
-       engine:quit()
-   end
-   ```
-
-4. Ejecuta el proyecto desde su raíz:
-
-   ```sh
-   love .
-   ```
-
-Con `scenesPath = "game.scenes"` e `initialScene = "hello"`, el motor carga
-`game/scenes/hello.lua`. Los identificadores de escena usan puntos en lugar de
-barras, así que `levels.level01` se resuelve como
-`game/scenes/levels/level01.lua`. La escena `hello` se crea en
-[Tu primer proyecto](/es/getting-started/first-project); usa el identificador de
-una escena que ya exista en tu proyecto.
-
-### Configuración obligatoria
-
-| Campo | Descripción |
+| Campo | Valores por defecto y comportamiento |
 | --- | --- |
-| `initialScene` | Obligatorio. Identificador de la primera escena a cargar. |
-| `inputMaps` | Obligatorio. Tabla de nombres de acción y sus teclas. Puede estar vacía, pero la tabla debe existir. |
-| `audio` | Opcional. `masterVolume`, `musicVolume` y `sfxVolume` tienen como valor predeterminado `1.0`. |
-| `scenesPath` | Prefijo usado para importar escenas. Por defecto: `game.scenes`. |
-| `resourceDefinitions` | Tabla de identificadores de recursos a definiciones. Por defecto, una tabla vacía. |
-| `resourceLoaders` | Tabla de cargadores. Por defecto, los cargadores integrados de imagen, sonido y fuente. |
-| `window` | Opcional. Si se proporciona, `width` y `height` son obligatorios. Los valores por defecto son `fullscreen = false`, `resizable = true` y `vsync = true`. |
-| `rendering` | Resolución lógica. Por defecto `1280 x 720`, `pixelPerfect = false` y fondo negro. |
+| `scenesPath` | `"game.scenes"`; prefijo no vacío de módulos Lua. |
+| `resourceDefinitions` | `{}`; definiciones indexadas por ID de recurso. |
+| `resourceLoaders` | Cargadores integrados para `image`, `sound` y `font`; una tabla proporcionada sustituye a los predeterminados. |
+| `window` | Si se omite, el motor no cambia el modo de ventana de LÖVE. Si se proporciona, `width` y `height` son enteros positivos obligatorios; por defecto `fullscreen = false`, `resizable = true` y `vsync = true`. |
+| `rendering` | Por defecto `width = 1280`, `height = 720`, `pixelPerfect = false`, `backgroundColor = { 0, 0, 0, 1 }` en la resolución lógica. Las dimensiones son enteros positivos. |
+| `audio` | `masterVolume`, `musicVolume` y `sfxVolume` tienen cada uno el valor predeterminado `1.0`. |
 
-`rendering.backgroundColor` acepta una tabla RGB o RGBA con componentes entre `0`
-y `1`. El motor lo aplica cuando se ejecuta `Engine:load()`.
+`backgroundColor` es un array contiguo RGB o RGBA con componentes entre `0` y `1`; el alfa omitido es `1`. `pixelPerfect = true` usa escalado entero y filtrado nearest; una ventana menor que la resolución lógica puede quedar recortada. Consulta la [arquitectura de Engine](/es/architecture/modules/engine) para más detalles de validación y ciclo de vida.
+
+Con el `scenesPath` predeterminado, `initialScene = "hello"` carga `game/scenes/hello.lua`; `levels.level01` carga `game/scenes/levels/level01.lua`. El módulo debe devolver una tabla con una función `new(context)` que devuelva una escena con los métodos de ciclo de vida utilizados por `SceneManager`. [Tu primer proyecto](/es/getting-started/first-project) incluye un ejemplo completo y reenvía los callbacks de LÖVE.
+
+## Empaquetar el juego
+
+Un archivo `.love` es un ZIP cuya **raíz** contiene `main.lua`, `engine/` y los archivos del juego, sin una carpeta `my-game/` que los envuelva. Usa un nombre nuevo para cada compilación: actualizar un ZIP existente puede conservar entradas eliminadas de la fuente. Por ejemplo, desde `my-game/` con el comando `zip` disponible:
+
+```sh
+if [ -e my-game.love ] || [ -L my-game.love ]; then
+    printf '%s\n' 'my-game.love ya existe; elige otro nombre.' >&2
+else
+    zip -r my-game.love main.lua engine game && love my-game.love
+fi
+```
+
+La comprobación también rechaza enlaces simbólicos rotos. Si el nombre está ocupado, elige otro nombre en ambos comandos; este ejemplo no elimina ni sobrescribe la ruta existente.
+
+Incluye los demás archivos que use el juego (por ejemplo, `conf.lua` o assets) en sus rutas correspondientes. No dependas de un directorio `engine/` fuera del archivo. Consulta la [guía de distribución de LÖVE](https://love2d.org/wiki/Game_Distribution) para el empaquetado específico de cada plataforma.
+
+## Licencias
+
+Esta copia no contiene un README ni una licencia en la raíz que conceda términos para el motor en su conjunto; no supongas que la licencia del `package.json` de la documentación se aplica al motor. Consulta al propietario del proyecto antes de redistribuirlo. Las bibliotecas incluidas tienen sus propios avisos, entre ellos `engine/lib/shove/LICENSE` y el aviso en `engine/lib/hump/camera.lua`; conserva y cumple los términos de terceros aplicables.
 
 ## Solución de problemas
 
-### `module 'engine.engine' not found`
-
-Ejecuta LÖVE desde la raíz del proyecto y asegúrate de que la carpeta del motor
-se llame `engine` y esté junto a `main.lua`. Las bibliotecas incluidas deben
-permanecer en `engine/lib/`.
-
-### `Failed to load scene '...'`
-
-El motor combina `scenesPath` y el identificador de la escena para construir la
-ruta del módulo Lua. Revisa ambos valores y confirma que el archivo existe. Por
-ejemplo, el identificador `levels.level01` se resuelve como
-`game/scenes/levels/level01.lua` cuando `scenesPath` es `game.scenes`. El archivo
-de la escena debe devolver una clase con una función `new`.
-
-### `Resource '...' is not defined`
-
-Añade el identificador del recurso a `game/resources/definitions.lua`, o a la
-tabla que pases como `resourceDefinitions`. Los recursos se cargan cuando se
-llama a `ResourceManager:get()`, normalmente desde el callback `onLoad` de una
-escena.
-
-### `No loader registered for resource type '...'`
-
-El `type` de la definición debe coincidir con una clave de la tabla de
-cargadores. Los cargadores integrados son `image`, `sound` y `font`.
-
-### Se lanza un error de mapa de entrada
-
-Cada acción debe ser un array de uno o más nombres de tecla únicos, sin huecos ni
-atajos duplicados en la misma acción. Por ejemplo:
-
-```lua
-return {
-    jump = { "space" },
-    move_left = { "left", "a" },
-    move_right = { "right", "d" },
-}
-```
-
-### No se puede crear la ventana
-
-`Engine:load()` llama a `love.window.setMode`. Si falla, comprueba que la
-resolución solicitada sea compatible, que el modo de pantalla completa esté
-disponible y que el entorno pueda crear una ventana gráfica. Los entornos sin
-interfaz gráfica no pueden ejecutar una ventana de LÖVE.
+- **`module 'engine.engine' not found`:** pasa a LÖVE el directorio o archivo `.love` que contiene tanto `main.lua` como `engine/`; conserva `engine/lib/`.
+- **`inputMaps must be a table`:** proporciona una tabla de mapas de entrada, aunque esté vacía. Cada acción con nombre debe tener un array no vacío y contiguo de cadenas de teclas únicas.
+- **`Failed to load scene '...'`:** revisa el prefijo `scenesPath`, el identificador de escena, el nombre y las mayúsculas exactas del archivo y que su módulo devuelva una tabla con `new`. El error también puede contener un fallo dentro del módulo de escena.
+- **Falla la creación de la ventana:** revisa el modo solicitado y el entorno gráfico. Los sistemas sin pantalla necesitan un backend gráfico offscreen adecuado; no disponen de una ventana normal.
 
 ## Siguientes pasos
 
-Continúa con [Tu primer proyecto](/es/getting-started/first-project) para
-construir una escena pequeña con entrada, movimiento y un recurso.
+Continúa con [Tu primer proyecto](/es/getting-started/first-project) para construir una escena completa con entrada y movimiento.
