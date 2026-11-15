@@ -9,7 +9,7 @@ local GAME_RESOLUTION = {
 }
 
 local engine = Engine.new({
-    initialScene = "levels.level01",
+    initialScene = "mainMenu",
     resourceDefinitions = resourcesDefinitions,
     inputMaps = inputMaps,
     window = {
@@ -26,30 +26,16 @@ local engine = Engine.new({
         pixelPerfect = true,
         backgroundColor = { 0.18, 0.25, 0.34 },
     },
-
-
 })
 
-function love.load()
-    engine:load()
-end
+function love.load() engine:load() end
 
-function love.update(dt)
-    engine:update(dt)
-end
+function love.update(dt) engine:update(dt) end
 
-function love.draw()
-    engine:draw()
-end
+function love.draw() engine:draw() end
 
-function love.keypressed(key)
-    engine:keypressed(key)
-end
+function love.keypressed(key) engine:keypressed(key) end
 
-function love.keyreleased(key)
-    engine:keyreleased(key)
-end
+function love.keyreleased(key) engine:keyreleased(key) end
 
-function love.quit()
-    engine:quit()
-end
+function love.quit() engine:quit() end

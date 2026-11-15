@@ -5,5 +5,10 @@ return {
 	exit = { "escape" },
 	move_left = { "left", "a" },
 	move_right = { "right", "e" },
-	jump = { "space" },
+    jump = { "space", "up" },
+
+    menu_up = { "up" },
+    menu_down = { "down" },
+    menu_accept = { "enter", "space" },
+    menu_back = { "escape" }
 }

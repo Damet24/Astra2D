@@ -17,23 +17,34 @@ local function loadAnimation(image, frameWidth, frameHeight, frameDuration)
 end
 
 local function loadQuads(image, Width, Height)
-	local width, height = image:getDimensions()
+    local width, height = image:getDimensions()
 
-	local quads = {}
+    local quads = {}
 
-	for y = 0, height - Height, Height do
-		for x = 0, width - Width, Width do
-			quads[#quads + 1] = love.graphics.newQuad(x, y, Width, Height, width, height)
-		end
-	end
+    for y = 0, height - Height, Height do
+        for x = 0, width - Width, Width do
+            quads[#quads + 1] = love.graphics.newQuad(x, y, Width, Height, width, height)
+        end
+    end
 
-	return {
-		image = image,
-		quads = quads
-	}
+    return {
+        image = image,
+        quads = quads
+    }
+end
+
+local function createGlyphMap(characters)
+    local glyphs = {}
+
+    for index, char in ipairs(characters) do
+        glyphs[char] = index
+    end
+
+    return glyphs
 end
 
 return {
 	loadAnimation = loadAnimation,
-	loadQuads = loadQuads
+    loadQuads = loadQuads,
+	createGlyphMap = createGlyphMap
 }

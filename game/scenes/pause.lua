@@ -1,4 +1,6 @@
 local Scene = require("engine.scene.scene")
+local GraphicsUtils = require("engine.graphics.utils")
+local SpriteFont = require("engine.graphics.spriteFont")
 
 local Pause = {}
 Pause.__index = Pause
@@ -16,7 +18,25 @@ function Pause.new(context)
 end
 
 function Pause:onLoad()
-	self.font = self.context.resourceManager:get(self, "pause_font")
+    local spriteFontSrc = GraphicsUtils.loadQuads(self.context.resourceManager:get(self, "menu_text_white"), 8, 10)
+
+    self.spriteFont = SpriteFont.new({
+        image = spriteFontSrc.image,
+        quads = spriteFontSrc.quads,
+        glyphs = GraphicsUtils.createGlyphMap({
+            "a", "b", "c", "d", "e", "f", "g", "h", "i", "j",
+            "k", "l", "m", "n", "o", "p", "q", "r", "s", "t",
+            "u", "v", "w", "x", "y", "z", " ", " ", " ", " ",
+            "0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
+            ".", ",", ":", "?", "!", "(", ")", "+", "-",
+        }),
+        glyphWidth = 8,
+        glyphHeight = 10,
+        spacing = 0,
+        lineHeight = 10,
+        fallback = "?",
+        uppercase = false
+    })
 end
 
 function Pause:update(dt)
@@ -30,13 +50,19 @@ function Pause:onDestroy()
 end
 
 function Pause:draw()
-	local width, height = self.context.viewport.getViewportDimensions()
+    local width, height = self.context.viewport.getViewportDimensions()
+    local text = "pausa"
+
+    local textWidth = self.spriteFont:getWidth(text)
+    local textHeight = self.spriteFont:getHeight(text)
+
+    local x = (width - textWidth) / 2
+    local y = (height - textHeight) / 2
 	love.graphics.push("all")
 	love.graphics.setColor(0, 0, 0, 0.6)
 	love.graphics.rectangle("fill", 0, 0, width, height)
 	love.graphics.setColor(1, 1, 1, 1)
-	love.graphics.setFont(self.font)
-	love.graphics.printf("PAUSA", 0, (height - self.font:getHeight()) / 2, width, "center")
+	self.spriteFont:draw(text, x, y)
 	love.graphics.pop()
 end
 

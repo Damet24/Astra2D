@@ -289,7 +289,7 @@ function Level:draw()
 	RenderSystem.submit(self.world, self.pipeline)
 	self.cameraManager:getActive():draw(function()
 		self.pipeline:draw()
-		PhysicsDebugSystem.draw(self.world)
+		-- PhysicsDebugSystem.draw(self.world)
     end)
 end
 
