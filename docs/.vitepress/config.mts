@@ -171,6 +171,7 @@ const esSidebar = [
 export default defineConfig({
   title: "Astra 2D",
   description: "A modular 2D game engine built with Lua and LÖVE.",
+  base: "https://damet24.github.io/astra2d",
 
   locales: {
     root: {
