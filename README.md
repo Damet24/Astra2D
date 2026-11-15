@@ -39,6 +39,8 @@ Para usar el motor en otro proyecto LÖVE, copia `engine/` completo, incluido `e
 
 ## Documentación
 
+La documentación completa está publicada en [GitHub Pages](https://damet24.github.io/Astra2D/); también puedes leerla directamente en [español](https://damet24.github.io/Astra2D/es/). Las fuentes del sitio están en `docs/`.
+
 - [Instalación](docs/es/getting-started/installation.md)
 - [Tu primer proyecto](docs/es/getting-started/first-project.md)
 - [Arquitectura](docs/es/architecture/overview.md)
