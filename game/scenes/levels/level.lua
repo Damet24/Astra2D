@@ -251,11 +251,9 @@ function Level:update(dt)
 	local mapWidth = self.map.width * self.map.tilewidth
 	local mapHeight = 240
 
-	-- Posición objetivo normal (siguiendo al jugador y limitada por mapa)
 	local targetX = limitAxis(playerX, mapWidth, halfWidth)
 	local targetY = limitAxis(playerY, mapHeight, halfHeight)
 
-	-- Bloqueo estilo Mario: la cámara nunca retrocede en X
 	self.cameraDistanceTraveled = math.max(self.cameraDistanceTraveled, targetX)
 
 	camera:setPosition(self.cameraDistanceTraveled, targetY)

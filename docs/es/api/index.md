@@ -11,7 +11,7 @@ Referencia técnica de las interfaces públicas de Astra 2D. Cada página indica
 ## Mundo y renderizado
 
 - [World y componentes](./world), [eventos](./events) y [física](./physics)
-- [Cámaras](./camera), [renderizado](./rendering) y [tilemaps](./tilemap)
+- [Cámaras](./camera), [renderizado](./rendering), [tilemaps](./tilemap) y [fuentes de sprites](./sprite-font)
 - [Utilidades gráficas](./graphics-utils)
 
 La referencia describe la implementación actual, no todas las funciones de las bibliotecas de terceros incluidas ni de LÖVE.
