@@ -231,7 +231,7 @@ function Level:onLoad()
     local camX = select(1, assert(self.cameraManager:getActive()):getPosition())
     self.cameraDistanceTraveled = camX
 
-    self.context.audioManager:playMusic("music")
+    self.context.audioManager:playMusic("music", {loop = true})
 end
 
 function Level:update(dt)
