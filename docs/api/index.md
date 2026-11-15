@@ -11,7 +11,7 @@ Technical reference for Astra 2D's public interfaces. Each page lists parameters
 ## World and rendering
 
 - [World and components](./world), [events](./events), and [physics](./physics)
-- [Cameras](./camera), [rendering](./rendering), and [tilemaps](./tilemap)
+- [Cameras](./camera), [rendering](./rendering), [tilemaps](./tilemap), and [sprite fonts](./sprite-font)
 - [Graphics utilities](./graphics-utils)
 
 The reference describes the current implementation, not every function of bundled third-party libraries or LÖVE itself.

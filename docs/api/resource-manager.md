@@ -12,7 +12,7 @@ Module: `require("engine.resources.resourceManager")`. On-demand cache keyed by 
 | `sound` | `path`: string; `soundType`: `"static"` or `"stream"` | `love.audio.newSource(path, soundType)` / `source:release()`. |
 | `font` | `size`: number | `love.graphics.newFont(size)` / `font:release()`; no font path is used. |
 
-Built-in loaders assert these fields; LÖVE can reject invalid assets or sizes. Images use LÖVE's default filter at creation, not a definition field. Engine's Shove setup sets that default before the initial scene loads.
+Built-in loaders assert these fields; LÖVE can reject invalid assets or sizes. Images use LÖVE's default filter at creation, not a definition field. Engine's Shove setup sets that default before the initial scene loads. The `font` type creates a LÖVE font from a size; it is unrelated to the glyph-sheet [sprite fonts](sprite-font.md).
 
 ## Methods
 

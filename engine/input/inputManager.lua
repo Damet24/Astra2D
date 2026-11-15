@@ -41,7 +41,6 @@ function InputManager.new(inputMaps)
 end
 
 function InputManager:keypressed(key)
-	print(key)
 	if not self.keys.pressed[key] then
 		self.keys.pressed[key] = true
 		self.keys.justPressed[key] = true
@@ -49,7 +48,6 @@ function InputManager:keypressed(key)
 end
 
 function InputManager:keyreleased(key)
-	print(key)
 	if self.keys.pressed[key] then
 		self.keys.pressed[key] = nil
 		self.keys.justReleased[key] = true

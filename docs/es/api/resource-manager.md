@@ -12,7 +12,7 @@ Módulo: `require("engine.resources.resourceManager")`. Caché bajo demanda por 
 | `sound` | `path`: cadena; `soundType`: `"static"` o `"stream"` | `love.audio.newSource(path, soundType)` / `source:release()`. |
 | `font` | `size`: número | `love.graphics.newFont(size)` / `font:release()`; no usa ruta de fuente. |
 
-Los cargadores integrados verifican estos campos mediante aserciones; LÖVE puede rechazar archivos o tamaños inválidos. Las imágenes usan el filtro predeterminado de LÖVE al crearse, no un campo de la definición. La configuración de Shove de Engine establece ese filtro antes de cargar la escena inicial.
+Los cargadores integrados verifican estos campos mediante aserciones; LÖVE puede rechazar archivos o tamaños inválidos. Las imágenes usan el filtro predeterminado de LÖVE al crearse, no un campo de la definición. La configuración de Shove de Engine establece ese filtro antes de cargar la escena inicial. El tipo `font` crea una fuente de LÖVE a partir de un tamaño; no está relacionado con las [fuentes de sprites](sprite-font.md) basadas en hojas de glifos.
 
 ## Métodos
 
