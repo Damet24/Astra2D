@@ -1,13 +1,34 @@
 {
-    "activeFile": "",
+    "activeFile": "maps/vIllage.tmx",
     "expandedProjectPaths": [
+        "maps/templates",
+        "maps",
+        "tilesets",
+        ".",
+        "maps/templates/obj"
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
+        "maps/vIllage.tmx": {
+            "scale": 0.5,
+            "selectedLayer": 3,
+            "viewCenter": {
+                "x": 579,
+                "y": 232
+            }
+        },
+        "tilesets/Terrain (16x16).tsx": {
+            "scaleInDock": 1
+        }
     },
+    "last.exportedFilePath": "/home/damet/Develop/Astra2D/game/maps",
+    "last.objectTemplatePath": "/home/damet/Develop/Astra2D/game/tiled/maps/templates/obj",
+    "map.lastUsedExportFilter": "All Files (*)",
     "openFiles": [
+        "maps/vIllage.tmx"
     ],
     "project": "main.tiled-project",
     "recentFiles": [
+        "maps/vIllage.tmx"
     ]
 }

@@ -8,7 +8,7 @@ function Level01.new(context)
         map = map,
 		background ="background_blue",
         enemySpawns = {
-            -- { x = 384, y = 192 },
+            { x = 384, y = 192 },
         }
 	})
 end

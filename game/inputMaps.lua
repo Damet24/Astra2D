@@ -9,6 +9,6 @@ return {
 
     menu_up = { "up" },
     menu_down = { "down" },
-    menu_accept = { "enter", "space" },
+    menu_accept = { "return", "space" },
     menu_back = { "escape" }
 }

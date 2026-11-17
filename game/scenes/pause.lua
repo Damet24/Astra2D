@@ -13,7 +13,7 @@ function Pause.new(context)
 	local self = Scene.new()
 	setmetatable(self, Pause)
 	self.context = context
-	self.drawBelow = true
+    self.drawBelow = true
 	return self
 end
 

@@ -41,6 +41,20 @@ function love.run()
 	assert(transform.y > 0 and math.abs(transform.y - body:getY()) < 0.001)
 	assert(transform.y < 100 and #started >= 2 and #ended >= 1)
 	assert((started[1].entityA == player and started[1].entityB == sensor) or (started[1].entityB == player and started[1].entityA == sensor))
+	assert(started[1].normalY == nil and type(started[1].velocityAY) == "number" and type(started[1].velocityBY) == "number")
+	local floorContact
+	for _, contact in ipairs(started) do
+		if (contact.entityA == player and contact.entityB == floor) or (contact.entityA == floor and contact.entityB == player) then
+			floorContact = contact
+			break
+		end
+	end
+	assert(floorContact, "expected the player to contact the floor")
+	if floorContact.entityA == player then
+		assert(floorContact.normalY > 0.5 and floorContact.velocityAY > floorContact.velocityBY)
+	else
+		assert(floorContact.normalY < -0.5 and floorContact.velocityBY > floorContact.velocityAY)
+	end
 	assert(floor and sensor)
 	local velocity = world:getComponent(player, Components.Velocity)
 	velocity.x = 100

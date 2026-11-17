@@ -26,7 +26,24 @@ function PlayerSystem.new(input, entity, audio)
 	return {
 		update = function(world, dt)
 			local body = assert(world:getComponent(entity, Components.RigidBody)).body
-			local velocity = assert(world:getComponent(entity, Components.Velocity))
+            local velocity = assert(world:getComponent(entity, Components.Velocity))
+
+            local knockback = world:getComponent(entity, "Knockback")
+            if knockback then
+                knockback.remaining = knockback.remaining - dt
+
+                if knockback.remaining > 0 then
+                    local _, velocityY = body:getLinearVelocity()
+                    velocity.x, velocity.y = knockback.speedX, velocityY
+                    body:setLinearVelocity(velocity.x, velocity.y)
+                    return
+                end
+
+                world:removeComponent(entity, "Knockback")
+            end
+
+
+
 			local direction = (input:isDown("move_right") and 1 or 0) - (input:isDown("move_left") and 1 or 0)
 			if direction ~= 0 then
 				local sprite = assert(world:getComponent(entity, Components.Sprite))
