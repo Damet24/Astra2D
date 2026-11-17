@@ -12,7 +12,7 @@ const TEMPLATE_SOURCE = path.join(
   "scene",
   "scene.lua",
 );
-const DEFAULT_SCENES_DIR = path.join("game", "scenes");
+const DEFAULT_SCENES_DIR = path.join("games", "scenes");
 const SCENE_NAME_PATTERN = /^[A-Za-z_][A-Za-z0-9_]*$/;
 const PLACEHOLDER = "{{sceneName}}";
 
@@ -26,11 +26,11 @@ Crea <name>.lua desde la plantilla de escenas.
 Argumentos:
   name   Identificador Lua de la escena, por ejemplo MyScene.
   ruta   Directorio destino; por defecto ${DEFAULT_SCENES_DIR}
-         (módulo Lua game.scenes).
+         (módulo Lua games.scenes).
 
 Ejemplos:
   astra2d scene:create MyScene
-  astra2d scene:create MyScene game/scenes
+  astra2d scene:create MyScene games/scenes
   astra2d s:c MyScene tests/scenes`;
 
 function assertTemplate() {

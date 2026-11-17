@@ -1,3 +1,3 @@
 return {
-    exit = "return"
+    exit = { "return" }
 }

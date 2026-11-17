@@ -26,9 +26,20 @@ test("initProject crea el proyecto en <ruta>/<nombre>", (t) => {
     fs.statSync(path.join(destination, "engine", "engine.lua")).isFile(),
   );
   assert.ok(fs.statSync(path.join(destination, "main.lua")).isFile());
-  assert.ok(
-    fs.statSync(path.join(destination, "game", "inputMaps.lua")).isFile(),
+  const inputMaps = fs.readFileSync(
+    path.join(destination, "game", "inputMaps.lua"),
+    "utf8",
   );
+  assert.match(inputMaps, /exit = \{ "return" \}/);
+
+  const mainScene = fs.readFileSync(
+    path.join(destination, "game", "scenes", "main.lua"),
+    "utf8",
+  );
+  assert.match(mainScene, /self\.elapsed = 0/);
+  assert.match(mainScene, /self\.elapsed = self\.elapsed \+ dt/);
+  assert.match(mainScene, /Press enter to exit/);
+
   assert.match(logs.join("\n"), /Proyecto creado en/);
 });
 

@@ -12,7 +12,7 @@ function makeTempDir(t) {
   return directory;
 }
 
-test("createScene usa game/scenes por defecto", (t) => {
+test("createScene usa games/scenes por defecto", (t) => {
   const cwd = makeTempDir(t);
   const logs = [];
 
@@ -21,11 +21,23 @@ test("createScene usa game/scenes por defecto", (t) => {
     log: (message) => logs.push(message),
   });
 
-  assert.equal(target, path.join(cwd, "game", "scenes", "MyScene.lua"));
+  assert.equal(target, path.join(cwd, "games", "scenes", "MyScene.lua"));
 
   const content = fs.readFileSync(target, "utf8");
   assert.match(content, /local MyScene = \{\}/);
   assert.match(content, /function MyScene\.new\(context\)/);
+
+  for (const callback of [
+    "onLoad",
+    "onEnter",
+    "onExit",
+    "onDestroy",
+    "update",
+    "draw",
+  ]) {
+    assert.match(content, new RegExp(`function MyScene:${callback}\\(`));
+  }
+
   assert.match(content, /return MyScene/);
   assert.doesNotMatch(content, /\{\{sceneName\}\}/);
   assert.match(logs.join("\n"), /Escena creada en/);
@@ -42,7 +54,7 @@ test("createScene acepta una ruta personalizada", (t) => {
 
 test("createScene no sobrescribe una escena existente", (t) => {
   const cwd = makeTempDir(t);
-  const target = path.join(cwd, "game", "scenes", "MyScene.lua");
+  const target = path.join(cwd, "games", "scenes", "MyScene.lua");
   fs.mkdirSync(path.dirname(target), { recursive: true });
   fs.writeFileSync(target, "-- existente\n");
 
