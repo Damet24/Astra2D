@@ -67,8 +67,11 @@ function Tutorial:onLoad()
     world:addSystem(PhysicsSystem)
     world:addSystem(PhysicsSync)
     world:addSystem(CollisionSystem)
-    world.events:on("collision_started", function(contact)
-        print("collision_started", contact.entityA, contact.entityB)
+    world:onCollisionStarted(player, function(other, collision)
+        print("collision_started", player, other)
+        if collision.normal then
+            print("normal", collision.normal.x, collision.normal.y)
+        end
     end)
 end
 
@@ -99,11 +102,30 @@ return Tutorial
 2. `PhysicsMovement` sends changed `Velocity` commands to non-static bodies. It sends both axes when either command changes; unchanged commands are not resent, allowing gravity and collisions to affect the body. `Velocity` is a command, not the current physical velocity.
 3. `PhysicsSystem` advances the LÖVE physics world in accumulated `1/60`-second steps, with no step cap. A frame shorter than a step may do no physics step.
 4. `PhysicsSync` copies body position and angle into `Transform`. Use the body to reposition physical entities; changing only `Transform` will be overwritten by sync.
-5. `CollisionSystem` queues contact events produced by the step. It installs and replaces physics callbacks when registered; events contain fixture entity IDs and are dispatched after all systems.
+5. `CollisionSystem` queues contact events produced by the step. It installs and replaces physics callbacks when registered. Events contain fixture entity IDs; `collision_started` also includes both bodies' velocities, sensor flags and, when neither fixture is a sensor, the normal from fixture A to B. Events are dispatched after all systems.
 
 For non-physics entities, register `engine.ecs.systems.movementSystem`: it integrates `Transform` and `Velocity` with `dt` and skips entities with `RigidBody`. For sprites, register animation as needed and use `RenderSystem.draw` or submit sprites with tiles through a pipeline; neither rendering nor physics systems are registered automatically. See [rendering architecture](/architecture/modules/rendering).
 
-## 3. Destruction and limitations
+## 3. Collision callbacks per entity
+
+`world:onCollisionStarted(entity, callback)` and `world:onCollisionEnded(entity, callback)` listen only for contacts involving that entity. The callback receives `(otherEntity, collision)` and is skipped if either entity has been destroyed or marked for destruction. Each call returns an unsubscribe function:
+
+```lua
+local stop = world:onCollisionStarted(player, function(other, collision)
+    print("contact with", other)
+    if collision.normal then
+        print("normal", collision.normal.x, collision.normal.y)
+    end
+    print("relative velocity", collision.relativeVelocity.x, collision.relativeVelocity.y)
+end)
+
+-- When the listener is no longer needed:
+stop()
+```
+
+`collision.normal`, `selfVelocity`, `otherVelocity` and `relativeVelocity` are `{ x, y }` tables relative to the registered entity: `relativeVelocity` is `otherVelocity - selfVelocity`, and the normal is reversed for the second fixture so it points from the registered entity toward the other one. The normal is `nil` for sensor contacts, and all four fields are `nil` for `collision_ended`. Raw `world.events` listeners are still available; see [events](/api/events) and [physics](/api/physics).
+
+## 4. Destruction and limitations
 
 `world:destroyEntity(id)` defers removal until after systems and event dispatch, so the entity can still appear in queries during that update. Flushing also destroys its `RigidBody.body`; removing the component directly does not. This example destroys its owned LÖVE physics world when the scene is destroyed; there is no `World:destroy()` helper. Factory colliders are rectangles with positive dimensions only. `World.new` sets LÖVE's global physics scale to 64 pixels per meter.
 
