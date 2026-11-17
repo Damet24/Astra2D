@@ -1,6 +1,6 @@
 # World y ECS
 
-`require("engine.ecs.world")` proporciona un contenedor ECS. `World.new(xg, yg, slepp)` devuelve un mundo independiente con `events` y un mundo de física de LÖVE en `physics`. El tercer parámetro se escribe `slepp` en el código; la gravedad predeterminada es `(0, 0)` y el reposo es `false`. La construcción necesita `love.physics` y establece su escala global en 64 píxeles por metro. No registra sistemas automáticamente. Consulta [física](physics.md) y [eventos](events.md).
+`require("engine.ecs.world")` proporciona un contenedor ECS. `World.new(xg, yg, slepp)` devuelve un mundo independiente con `events` y un mundo de física de LÖVE en `physics`. El tercer parámetro se escribe `slepp` en el código; la gravedad predeterminada es `(0, 0)` y el reposo es `false`. La construcción necesita `love.physics` y establece su escala global en 64 píxeles por metro. No registra sistemas automáticamente. Los contactos están disponibles como eventos encolados y mediante los auxiliares por entidad descritos abajo. Consulta [física](physics.md) y [eventos](events.md).
 
 ## Entidades y componentes
 
@@ -16,12 +16,40 @@ Salvo donde se indique un retorno, los métodos no devuelven valores. Los nombre
 | `hasComponent(entity, name)` | Devuelve si el valor almacenado no es `nil`. |
 | `removeComponent(entity, name)` | Elimina la entrada si existe; quitar `RigidBody` no destruye su cuerpo. |
 | `query(componentNames, callback)` | Recorre los IDs vivos que coinciden con todos los nombres del array y llama a `callback(entity, components)`, con componentes indexados por nombre. Un array vacío coincide con todos; el orden no está definido (`pairs`). La coincidencia usa veracidad, no solo ausencia de `nil`. |
+| `onCollisionStarted(entity, callback)` | Registra un callback para inicios de contacto que impliquen a la entidad; devuelve una función de desuscripción. Consulta [callbacks de colisión](#callbacks-de-colision). |
+| `onCollisionEnded(entity, callback)` | Registra un callback para fines de contacto que impliquen a la entidad; devuelve una función de desuscripción. |
 
 ## Sistemas y ciclo de vida
 
 `addSystem(system)` añade una tabla y llama inmediatamente a `system.init(world)` si existe. `update(dt)` llama a cada `system.update(world, dt)` en orden de registro, despacha eventos y después llama a `flushDestroy()`. `draw()` llama a cada `system.draw(world)` en orden de registro. Son funciones normales, no métodos con dos puntos. No hay validación de esquema ni protección de errores de callbacks; un error interrumpe la operación.
 
 Los sistemas incluidos son `movementSystem`, `physicsMovementSystem`, `physicsSystem`, `physicsSyncSystem`, `collisionSystem`, `animationSystem`, `renderSystem` y `physicsDebugSystem`. `damageSystem.update` está vacío actualmente. Movement integra `Transform` y `Velocity` para entidades sin `RigidBody`; los sistemas físicos y su orden se detallan en [física](physics.md). Animation usa `Sprite.animations[Animation.current]`, `Animation.frame`, `timer`, `playing` y `loop`; durante la reproducción, el `frameDuration` de la animación seleccionada debe ser un número positivo. Consulta [renderizado](rendering.md) para los campos de sprite.
+
+## Callbacks de colisión
+
+`onCollisionStarted(entity, callback)` y `onCollisionEnded(entity, callback)` registran un listener solo para los contactos que implican a una entidad viva concreta. Validan con `Invalid entity` un ID desconocido o ya eliminado y con `callback must be a function` un callback que no sea función. El callback se llama como `callback(otherEntity, collision)` cuando se despachan los eventos; se omiten los contactos si alguna de las dos entidades no existe o está pendiente de borrado. Ambos métodos devuelven una función de desuscripción: al llamarla, el listener se desactiva de inmediato y se encola su eliminación de `world.events`. Esa eliminación se aplica en el siguiente vaciado del gestor de eventos, que ocurre al final de cada despacho.
+
+La tabla `collision` está expresada respecto a la entidad registrada:
+
+| Campo | Significado |
+| --- | --- |
+| `normal` | Normal de contacto `{ x, y }` en eventos `collision_started` sin sensores; apunta desde la fixture de la entidad registrada hacia la otra fixture. Vale `nil` en contactos con sensores. |
+| `selfVelocity` | Velocidad lineal `{ x, y }` del cuerpo de la entidad registrada al comenzar el contacto. |
+| `otherVelocity` | Velocidad lineal `{ x, y }` del otro cuerpo al comenzar el contacto. |
+| `relativeVelocity` | `{ x, y }` igual a `otherVelocity - selfVelocity`. |
+
+Los cuatro campos valen `nil` en `collision_ended`. Registra `collisionSystem` para que se produzcan estos eventos; [física](physics.md) documenta los datos de los eventos directos.
+
+```lua
+local stop = world:onCollisionStarted(id, function(other, collision)
+    if collision.normal then
+        print("hit", other, collision.normal.x, collision.normal.y)
+    end
+end)
+
+-- Más tarde, cuando el listener ya no sea necesario:
+stop()
+```
 
 ## Ejemplo
 

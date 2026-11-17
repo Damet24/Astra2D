@@ -13,7 +13,7 @@ The engine provides a constructor and a rectangle factory, not its own physics o
 
 Systems are opt-in. A typical registration order is `movementSystem`, `physicsMovementSystem`, `physicsSystem`, `physicsSyncSystem`, `collisionSystem`. The first integrates non-rigid entities. Physics movement applies `Velocity.x/y` to non-static bodies only when the effective command changes, optionally capped by `Movement.maxSpeed`; gravity and contacts can subsequently alter physical velocity. Physics advances in fixed 1/60 s steps using an accumulator, with no step cap or interpolation. Sync copies body position and angle to `Transform`.
 
-`CollisionSystem.init` replaces the LÖVE world's callbacks with begin/end callbacks, which collect fixture user data. Its update queues `collision_started` and `collision_ended` events with `{ entityA, entityB }`; install it after the physics step to process contacts from that update. Started events also include the body velocities `velocityAY` and `velocityBY` captured at contact start, and `normalY`, the vertical normal from fixture A to B for non-sensor contacts. Sensor contacts have no normal. IDs can be `nil` for fixtures without user data. No `Contact` is retained. World events dispatch after systems, then pending entities and their current bodies are destroyed. Contacts produced during destruction are processed in a later update. Removing `RigidBody` separately does not destroy its body.
+`CollisionSystem.init` replaces the LÖVE world's callbacks with begin/end callbacks that collect fixture user data. Its update queues `collision_started` and `collision_ended` events and emits the whole contact table; install it after the physics step to process contacts from that update. Both events contain `entityA` and `entityB` (fixture user data, possibly `nil`). `collision_started` also contains `normalX` and `normalY` (both `nil` when either fixture is a sensor), the body velocities `velocityAX`/`velocityAY` and `velocityBX`/`velocityBY` captured when contact begins, and the booleans `sensorA` and `sensorB`. The normal goes from fixture A to fixture B; sensor contacts have none. `collision_ended` carries only the two entity IDs. No `Contact` is retained. World events dispatch after systems, then pending entities and their current bodies are destroyed. Contacts produced during destruction are processed in a later update. Removing `RigidBody` separately does not destroy its body. For entity-relative vectors and automatic filtering of destroyed entities, use `World:onCollisionStarted` / `World:onCollisionEnded` in [world](world.md).
 
 ## Example
 
@@ -34,6 +34,14 @@ world:addComponent(id, C.RigidBody, { type = "dynamic" })
 world:addComponent(id, C.Collider, { shape = "rectangle", width = 32, height = 32 })
 local body, fixture = Factory.create(world, id)
 body:setFixedRotation(true) -- LÖVE Body method
+
+local stop = world:onCollisionStarted(id, function(other, collision)
+    if collision.normal then
+        print("hit", other, collision.normal.x, collision.normal.y)
+    end
+end)
+-- stop() unsubscribes when no longer needed
+
 world:update(1 / 60)
 ```
 

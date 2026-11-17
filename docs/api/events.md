@@ -12,7 +12,7 @@
 | `off(eventName, callback)` | Queues removal of the first matching callback by identity; missing names or callbacks are ignored when flushed. |
 | `flush()` | Applies queued removals immediately, in order, without dispatching events. |
 
-`off` does not stop a listener during the current dispatch unless the caller explicitly flushes the pending operation. `on` is immediate. Dispatch iterates the live listener list: adding a listener with `on` during a callback may run it in the same dispatch, and calling `flush` after `off` can shift the list and skip a following listener. For predictable delivery, defer registrations and explicit flushing until dispatch finishes. `World:update(dt)` dispatches after all system updates and before deferred entity destruction. Callback errors propagate and interrupt dispatch; the current queue has already been detached and the final `flush()` is not reached. No automatic unsubscribe is provided.
+`off` does not stop a listener during the current dispatch unless the caller explicitly flushes the pending operation. `on` is immediate. Dispatch iterates the live listener list: adding a listener with `on` during a callback may run it in the same dispatch, and calling `flush` after `off` can shift the list and skip a following listener. For predictable delivery, defer registrations and explicit flushing until dispatch finishes. `World:update(dt)` dispatches after all system updates and before deferred entity destruction. Callback errors propagate and interrupt dispatch; the current queue has already been detached and the final `flush()` is not reached. The generic manager provides no automatic unsubscribe; the World collision helpers described below return one.
 
 ## Example
 
@@ -27,4 +27,4 @@ events:off("scored", listener)
 events:flush()
 ```
 
-`CollisionSystem` emits `collision_started` and `collision_ended` with `{ entityA, entityB }`. Started events also contain impact velocities and, for non-sensor contacts, the normal; see [physics](physics.md). See also [world architecture](../architecture/modules/world.md) and the [ECS guide](../guides/ecs.md).
+`CollisionSystem` emits `collision_started` and `collision_ended` with `{ entityA, entityB }`. Started events also carry `normalX`/`normalY` (non-sensor contacts only), both bodies' `velocityAX`/`velocityAY` and `velocityBX`/`velocityBY`, and `sensorA`/`sensorB`; see [physics](physics.md) for the full payload. `World:onCollisionStarted` and `World:onCollisionEnded` wrap these events with entity-scoped callbacks and an unsubscribe function; see [world](world.md). See also [world architecture](../architecture/modules/world.md) and the [ECS guide](../guides/ecs.md).

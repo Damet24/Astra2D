@@ -12,7 +12,7 @@
 | `off(eventName, callback)` | Encola la eliminación del primer callback idéntico; ignora nombres o callbacks ausentes al vaciar. |
 | `flush()` | Aplica inmediatamente las eliminaciones encoladas, en orden, sin despachar eventos. |
 
-`off` no detiene un listener durante el despacho actual salvo que el llamador vacíe explícitamente la operación pendiente. `on` es inmediato. El despacho recorre la lista activa de listeners: añadir uno con `on` durante un callback puede ejecutarlo en el mismo despacho, y llamar a `flush` después de `off` puede desplazar la lista y omitir un listener posterior. Para una entrega predecible, difiere los registros y el vaciado explícito hasta que termine el despacho. `World:update(dt)` despacha tras actualizar todos los sistemas y antes de destruir las entidades pendientes. Los errores de callbacks se propagan e interrumpen el despacho; la cola actual ya se ha separado y no se llega al `flush()` final. No hay desuscripción automática.
+`off` no detiene un listener durante el despacho actual salvo que el llamador vacíe explícitamente la operación pendiente. `on` es inmediato. El despacho recorre la lista activa de listeners: añadir uno con `on` durante un callback puede ejecutarlo en el mismo despacho, y llamar a `flush` después de `off` puede desplazar la lista y omitir un listener posterior. Para una entrega predecible, difiere los registros y el vaciado explícito hasta que termine el despacho. `World:update(dt)` despacha tras actualizar todos los sistemas y antes de destruir las entidades pendientes. Los errores de callbacks se propagan e interrumpen el despacho; la cola actual ya se ha separado y no se llega al `flush()` final. El gestor genérico no ofrece desuscripción automática; los auxiliares de colisión de World descritos abajo sí devuelven una.
 
 ## Ejemplo
 
@@ -27,4 +27,4 @@ events:off("scored", listener)
 events:flush()
 ```
 
-`CollisionSystem` emite `collision_started` y `collision_ended` con `{ entityA, entityB }`. Los eventos de inicio también contienen las velocidades del impacto y, para contactos sin sensores, la normal; consulta [física](physics.md). Consulta también la [arquitectura de World](../architecture/modules/world.md) y la [guía de ECS](../guides/ecs.md).
+`CollisionSystem` emite `collision_started` y `collision_ended` con `{ entityA, entityB }`. Los eventos de inicio también contienen `normalX`/`normalY` (solo en contactos sin sensores), las velocidades de ambos cuerpos `velocityAX`/`velocityAY` y `velocityBX`/`velocityBY`, y los booleanos `sensorA`/`sensorB`; consulta [física](physics.md) para los datos completos. `World:onCollisionStarted` y `World:onCollisionEnded` envuelven estos eventos con callbacks por entidad y una función de desuscripción; consulta [world](world.md). Consulta también la [arquitectura de World](../architecture/modules/world.md) y la [guía de ECS](../guides/ecs.md).

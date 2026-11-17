@@ -13,7 +13,7 @@ El motor proporciona un constructor y una fábrica de rectángulos, no una API p
 
 Los sistemas son opcionales. Un orden habitual de registro es `movementSystem`, `physicsMovementSystem`, `physicsSystem`, `physicsSyncSystem`, `collisionSystem`. El primero integra entidades sin cuerpo rígido. Physics movement aplica `Velocity.x/y` a cuerpos no estáticos solo cuando cambia la orden efectiva, limitada opcionalmente por `Movement.maxSpeed`; la gravedad y los contactos pueden modificar después la velocidad física. La física avanza en pasos fijos de 1/60 s con un acumulador, sin límite de pasos ni interpolación. Sync copia la posición y el ángulo del cuerpo a `Transform`.
 
-`CollisionSystem.init` reemplaza los callbacks del mundo LÖVE por callbacks de inicio/fin, que recogen los datos de usuario de los fixtures. Su actualización encola `collision_started` y `collision_ended` con `{ entityA, entityB }`; regístralo después del paso físico para procesar los contactos de esa actualización. Los eventos de inicio también incluyen las velocidades de los cuerpos `velocityAY` y `velocityBY` capturadas al comenzar el contacto y `normalY`, la normal vertical de la fixture A hacia la B para contactos sin sensores. Los sensores no tienen normal. Los IDs pueden ser `nil` si un fixture no tiene datos de usuario. No se conserva el `Contact`. World despacha eventos después de los sistemas y luego destruye las entidades pendientes y sus cuerpos actuales. Los contactos producidos durante la destrucción se procesan en una actualización posterior. Quitar `RigidBody` por separado no destruye su cuerpo.
+`CollisionSystem.init` reemplaza los callbacks del mundo LÖVE por callbacks de inicio/fin que recogen los datos de usuario de los fixtures. Su actualización encola `collision_started` y `collision_ended` y emite la tabla completa de contacto; regístralo después del paso físico para procesar los contactos de esa actualización. Ambos eventos contienen `entityA` y `entityB` (datos de usuario de las fixtures, que pueden ser `nil`). `collision_started` también incluye `normalX` y `normalY` (ambos `nil` si alguna fixture es sensor), las velocidades de los cuerpos `velocityAX`/`velocityAY` y `velocityBX`/`velocityBY` capturadas al comenzar el contacto, y los booleanos `sensorA` y `sensorB`. La normal va de la fixture A hacia la B; los contactos con sensores no tienen normal. `collision_ended` solo lleva los dos IDs de entidad. No se conserva el `Contact`. World despacha eventos después de los sistemas y luego destruye las entidades pendientes y sus cuerpos actuales. Los contactos producidos durante la destrucción se procesan en una actualización posterior. Quitar `RigidBody` por separado no destruye su cuerpo. Para vectores relativos a la entidad y filtrado automático de entidades destruidas, usa `World:onCollisionStarted` / `World:onCollisionEnded` en [world](world.md).
 
 ## Ejemplo
 
@@ -34,6 +34,14 @@ world:addComponent(id, C.RigidBody, { type = "dynamic" })
 world:addComponent(id, C.Collider, { shape = "rectangle", width = 32, height = 32 })
 local body, fixture = Factory.create(world, id)
 body:setFixedRotation(true) -- método Body de LÖVE
+
+local stop = world:onCollisionStarted(id, function(other, collision)
+    if collision.normal then
+        print("hit", other, collision.normal.x, collision.normal.y)
+    end
+end)
+-- stop() cancela la suscripción cuando ya no haga falta
+
 world:update(1 / 60)
 ```
 

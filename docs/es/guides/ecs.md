@@ -67,8 +67,11 @@ function Tutorial:onLoad()
     world:addSystem(PhysicsSystem)
     world:addSystem(PhysicsSync)
     world:addSystem(CollisionSystem)
-    world.events:on("collision_started", function(contact)
-        print("collision_started", contact.entityA, contact.entityB)
+    world:onCollisionStarted(player, function(other, collision)
+        print("collision_started", player, other)
+        if collision.normal then
+            print("normal", collision.normal.x, collision.normal.y)
+        end
     end)
 end
 
@@ -99,11 +102,30 @@ return Tutorial
 2. `PhysicsMovement` envía los comandos `Velocity` modificados a cuerpos no estáticos. Envía ambos ejes cuando cambia cualquiera de ellos; los comandos sin cambios no se reenvían, permitiendo que la gravedad y las colisiones afecten al cuerpo. `Velocity` es un comando, no la velocidad física actual.
 3. `PhysicsSystem` avanza el mundo físico de LÖVE en pasos acumulados de `1/60` de segundo, sin límite de pasos. Un frame más corto que un paso puede no ejecutar ningún paso físico.
 4. `PhysicsSync` copia la posición y el ángulo del cuerpo a `Transform`. Usa el cuerpo para recolocar entidades físicas; si solo cambias `Transform`, la sincronización lo sobrescribirá.
-5. `CollisionSystem` encola los eventos de contacto producidos por el paso. Al registrarse instala y reemplaza los callbacks de física; los eventos contienen los ID de entidad de las fixtures y se despachan después de todos los sistemas.
+5. `CollisionSystem` encola los eventos de contacto producidos por el paso. Al registrarse instala y reemplaza los callbacks de física. Los eventos contienen los ID de entidad de las fixtures; `collision_started` también incluye las velocidades de ambos cuerpos, los indicadores de sensor y, si ninguna fixture es sensor, la normal de la fixture A hacia la B. Los eventos se despachan después de todos los sistemas.
 
 Para entidades sin física, registra `engine.ecs.systems.movementSystem`: integra `Transform` y `Velocity` con `dt` y omite entidades con `RigidBody`. Para sprites, registra la animación si es necesario y usa `RenderSystem.draw` o envía sprites junto con tiles a través de un pipeline; ni los sistemas de renderizado ni los de física se registran automáticamente. Consulta la [arquitectura de renderizado](/es/architecture/modules/rendering).
 
-## 3. Destrucción y limitaciones
+## 3. Callbacks de colisión por entidad
+
+`world:onCollisionStarted(entity, callback)` y `world:onCollisionEnded(entity, callback)` escuchan solo los contactos que implican a esa entidad. El callback recibe `(otherEntity, collision)` y se omite si alguna de las dos entidades se ha destruido o está marcada para borrado. Cada llamada devuelve una función de desuscripción:
+
+```lua
+local stop = world:onCollisionStarted(player, function(other, collision)
+    print("contact with", other)
+    if collision.normal then
+        print("normal", collision.normal.x, collision.normal.y)
+    end
+    print("relative velocity", collision.relativeVelocity.x, collision.relativeVelocity.y)
+end)
+
+-- Cuando el listener ya no sea necesario:
+stop()
+```
+
+`collision.normal`, `selfVelocity`, `otherVelocity` y `relativeVelocity` son tablas `{ x, y }` relativas a la entidad registrada: `relativeVelocity` es `otherVelocity - selfVelocity`, y la normal se invierte para la segunda fixture de modo que apunte desde la entidad registrada hacia la otra. La normal es `nil` en contactos con sensores y los cuatro campos valen `nil` en `collision_ended`. Los listeners directos de `world.events` siguen disponibles; consulta [eventos](/es/api/events) y [física](/es/api/physics).
+
+## 4. Destrucción y limitaciones
 
 `world:destroyEntity(id)` difiere la eliminación hasta después de los sistemas y el despacho de eventos, por lo que la entidad aún puede aparecer en consultas durante esa actualización. Al aplicar la eliminación también se destruye su `RigidBody.body`; quitar el componente directamente no lo destruye. Este ejemplo destruye el mundo físico de LÖVE que le pertenece cuando se destruye la escena; no existe un método auxiliar `World:destroy()`. Los colliders de la factory solo son rectángulos de dimensiones positivas. `World.new` establece la escala global de física de LÖVE en 64 píxeles por metro.
 
