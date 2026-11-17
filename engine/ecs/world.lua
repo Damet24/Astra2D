@@ -127,11 +127,139 @@ function World:update(dt)
 end
 
 function World:draw()
-	for _, system in ipairs(self.systems) do
-		if system.draw then
-			system.draw(self)
-		end
-	end
+    for _, system in ipairs(self.systems) do
+        if system.draw then
+            system.draw(self)
+        end
+    end
 end
+
+
+local function createCollisionInfo(contact, entityIsA)
+    local selfVelocity
+    local otherVelocity
+    local normal
+
+    if entityIsA then
+        if contact.normalX and contact.normalY then
+            normal = {
+                x = contact.normalX,
+                y = contact.normalY,
+            }
+        end
+
+        if contact.velocityAX and contact.velocityAY then
+            selfVelocity = {
+                x = contact.velocityAX,
+                y = contact.velocityAY,
+            }
+        end
+
+        if contact.velocityBX and contact.velocityBY then
+            otherVelocity = {
+                x = contact.velocityBX,
+                y = contact.velocityBY,
+            }
+        end
+    else
+        if contact.normalX and contact.normalY then
+            normal = {
+                x = -contact.normalX,
+                y = -contact.normalY,
+            }
+        end
+
+        if contact.velocityBX and contact.velocityBY then
+            selfVelocity = {
+                x = contact.velocityBX,
+                y = contact.velocityBY,
+            }
+        end
+
+        if contact.velocityAX and contact.velocityAY then
+            otherVelocity = {
+                x = contact.velocityAX,
+                y = contact.velocityAY,
+            }
+        end
+    end
+
+    local relativeVelocity
+
+    if selfVelocity and otherVelocity then
+        relativeVelocity = {
+            x = otherVelocity.x - selfVelocity.x,
+            y = otherVelocity.y - selfVelocity.y,
+        }
+    end
+
+    return {
+        normal = normal,
+        selfVelocity = selfVelocity,
+        otherVelocity = otherVelocity,
+        relativeVelocity = relativeVelocity,
+    }
+end
+
+function World:_onCollision(eventName, entity, callback)
+    assert(self.entities[entity], "Invalid entity")
+    assert(type(callback) == "function", "callback must be a function")
+
+    local active = true
+
+    local listener = function(contact)
+        if not active then
+            return
+        end
+
+        if not self.entities[entity] or self.pendingDestroy[entity] then
+            return
+        end
+
+        local other
+        local entityIsA
+
+        if contact.entityA == entity then
+            other = contact.entityB
+            entityIsA = true
+        elseif contact.entityB == entity then
+            other = contact.entityA
+            entityIsA = false
+        end
+
+        if not other then
+            return
+        end
+
+        if not self.entities[other] or self.pendingDestroy[other] then
+            return
+        end
+
+        local collision = createCollisionInfo(contact, entityIsA)
+
+        callback(other, collision)
+    end
+
+    self.events:on(eventName, listener)
+
+    -- Return an unsubscribe function.
+    return function()
+        if not active then
+            return
+        end
+
+        active = false
+        self.events:off(eventName, listener)
+    end
+end
+
+function World:onCollisionStarted(entity, callback)
+    return self:_onCollision("collision_started", entity, callback)
+end
+
+function World:onCollisionEnded(entity, callback)
+    return self:_onCollision("collision_ended", entity, callback)
+end
+
 
 return World
