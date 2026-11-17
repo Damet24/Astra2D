@@ -1,0 +1,44 @@
+{
+  "name": "astra2d-cli",
+  "version": "1.0.0",
+  "description": "CLI oficial para el motor Astra2D.",
+  "main": "bin/astra2d.js",
+  "type": "module",
+  "bin": {
+    "astra2d": "bin/astra2d.js"
+  },
+  "files": [
+    "bin/",
+    "src/",
+    "assets/engine/",
+    "LICENSE",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "node scripts/build.js",
+    "test": "node --test",
+    "prepack": "npm run build"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "commander": "^14.0.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Damet24/Astra2D.git",
+    "directory": "cli"
+  },
+  "homepage": "https://damet24.github.io/Astra2D/",
+  "bugs": {
+    "url": "https://github.com/Damet24/Astra2D/issues"
+  },
+  "keywords": [
+    "astra2d",
+    "love2d",
+    "lua",
+    "gamedev"
+  ],
+  "license": "MIT"
+}
