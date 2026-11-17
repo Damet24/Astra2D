@@ -3,8 +3,8 @@ name: Deploy VitePress Documentation
 
 on:
   push:
-    branches:
-      - master
+    tag:
+      - 'v*'
 
   workflow_dispatch:
 
