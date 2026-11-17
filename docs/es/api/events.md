@@ -27,4 +27,4 @@ events:off("scored", listener)
 events:flush()
 ```
 
-`CollisionSystem` emite `collision_started` y `collision_ended` con `{ entityA, entityB }`; consulta [física](physics.md). Consulta también la [arquitectura de World](../architecture/modules/world.md) y la [guía de ECS](../guides/ecs.md).
+`CollisionSystem` emite `collision_started` y `collision_ended` con `{ entityA, entityB }`. Los eventos de inicio también contienen las velocidades del impacto y, para contactos sin sensores, la normal; consulta [física](physics.md). Consulta también la [arquitectura de World](../architecture/modules/world.md) y la [guía de ECS](../guides/ecs.md).
