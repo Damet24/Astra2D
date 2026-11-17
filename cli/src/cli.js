@@ -27,8 +27,8 @@ program
   .command("init <project-name> [ruta]")
   .description("Inicializa un nuevo proyecto Astra2D")
   .addHelpText("after", `\n${INIT_HELP}`)
-  .action((projectName, ruta) => {
-    initProject(projectName, ruta, { log });
+  .action(async (projectName, ruta) => {
+    await initProject(projectName, ruta, { log });
   });
 
 program
@@ -41,7 +41,7 @@ program
   });
 
 try {
-  program.parse(process.argv);
+  await program.parseAsync(process.argv);
 } catch (error) {
   process.stderr.write(`${error.message}\n`);
   process.exitCode = 1;

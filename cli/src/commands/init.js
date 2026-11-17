@@ -3,6 +3,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { CliError } from "../errors.js";
+import { downloadEngine } from "../services/engineSource.js";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const PACKAGE_ROOT = path.resolve(HERE, "..", "..");
@@ -10,7 +11,7 @@ const DEV_ENGINE_SOURCE = path.resolve(PACKAGE_ROOT, "..", "engine");
 const PACKAGED_ENGINE_SOURCE = path.join(PACKAGE_ROOT, "assets", "engine");
 const TEMPLATE_SOURCE = path.join(HERE, "..", "templates", "project");
 
-function findEngineSource() {
+function findLocalEngineSource() {
   return [DEV_ENGINE_SOURCE, PACKAGED_ENGINE_SOURCE].find((candidate) =>
     fs.existsSync(path.join(candidate, "engine.lua")),
   );
@@ -20,7 +21,9 @@ export const USAGE = "Uso: astra2d init <project-name> [ruta]";
 
 export const INIT_HELP = `${USAGE}
 
-Copia engine/ y el contenido de la plantilla de proyecto en <ruta>/<project-name>.
+Descarga engine/ desde el último release/tag de GitHub y copia el contenido de
+la plantilla de proyecto en <ruta>/<project-name>. Si falla la descarga, usa el
+engine incluido en el paquete.
 
 Argumentos:
   project-name   Nombre de la carpeta del proyecto. Usa "." para inicializar
@@ -78,23 +81,21 @@ function parseArgs(args) {
   return { name, basePath };
 }
 
-function assertSources() {
-  if (!findEngineSource()) {
-    throw new CliError(
-      `No se encontró engine/. Buscado en: ${DEV_ENGINE_SOURCE} y ${PACKAGED_ENGINE_SOURCE}`,
-    );
-  }
-
+function assertTemplateSource() {
   if (!fs.existsSync(TEMPLATE_SOURCE) || !fs.statSync(TEMPLATE_SOURCE).isDirectory()) {
     throw new CliError(`No se encontró la plantilla de proyecto: ${TEMPLATE_SOURCE}`);
   }
 }
 
-function getEntries() {
+function getEntryNames() {
+  return ["engine", ...fs.readdirSync(TEMPLATE_SOURCE).sort()];
+}
+
+function getEntries(engineSource) {
   const templateNames = fs.readdirSync(TEMPLATE_SOURCE).sort();
 
   return [
-    { name: "engine", source: findEngineSource() },
+    { name: "engine", source: engineSource },
     ...templateNames.map((name) => ({
       name,
       source: path.join(TEMPLATE_SOURCE, name),
@@ -102,7 +103,7 @@ function getEntries() {
   ];
 }
 
-export function runInit(args, options = {}) {
+export async function runInit(args, options = {}) {
   const cwd = options.cwd || process.cwd();
   const log = options.log || (() => {});
   const parsed = parseArgs(args);
@@ -112,9 +113,8 @@ export function runInit(args, options = {}) {
     return null;
   }
 
-  assertSources();
+  assertTemplateSource();
 
-  const entries = getEntries();
   const destination = parsed.inPlace
     ? path.resolve(cwd, parsed.basePath)
     : path.resolve(cwd, parsed.basePath, parsed.name);
@@ -124,9 +124,7 @@ export function runInit(args, options = {}) {
   }
 
   const conflicts = parsed.inPlace
-    ? entries
-        .map((entry) => entry.name)
-        .filter((name) => fs.existsSync(path.join(destination, name)))
+    ? getEntryNames().filter((name) => fs.existsSync(path.join(destination, name)))
     : [];
 
   if (conflicts.length > 0) {
@@ -135,10 +133,34 @@ export function runInit(args, options = {}) {
     );
   }
 
+  let engine;
+  let usedFallback = false;
+  const fetchEngine = options.engineSource || downloadEngine;
+
+  try {
+    engine = await fetchEngine({ log });
+  } catch (error) {
+    usedFallback = true;
+    log(
+      `No se pudo descargar el engine desde GitHub (${error.message}). ` +
+        "Usando la copia incluida.",
+    );
+
+    const localEngine = findLocalEngineSource();
+
+    if (!localEngine) {
+      throw new CliError("No se encontró una copia local de engine/ para usar como fallback");
+    }
+
+    engine = { path: localEngine, cleanup() {} };
+  }
+
   let createdDestination = false;
   const copied = [];
 
   try {
+    const entries = getEntries(engine.path);
+
     if (!parsed.inPlace) {
       fs.mkdirSync(destination, { recursive: true });
       createdDestination = true;
@@ -155,6 +177,10 @@ export function runInit(args, options = {}) {
 
       copied.push(target);
     }
+
+    if (usedFallback) {
+      log("Proyecto creado con el engine incluido en el paquete.");
+    }
   } catch (error) {
     if (createdDestination) {
       fs.rmSync(destination, { recursive: true, force: true });
@@ -165,13 +191,15 @@ export function runInit(args, options = {}) {
     }
 
     throw new CliError(`No se pudo crear el proyecto: ${error.message}`);
+  } finally {
+    engine.cleanup?.();
   }
 
   log(`Proyecto creado en ${destination}`);
   return destination;
 }
 
-export function initProject(projectName, targetPath, options = {}) {
+export async function initProject(projectName, targetPath, options = {}) {
   if (targetPath && typeof targetPath === "object") {
     options = targetPath;
     targetPath = undefined;

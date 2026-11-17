@@ -56,8 +56,13 @@ astra2d s:c <name> [ruta]
 
 ### `init`
 
-Copia `engine/` y el contenido de `src/templates/project/` en
-`<ruta>/<project-name>`. Si se omite `ruta`, usa `.`.
+Descarga `engine/` desde el último release (o, si no hay releases, desde el
+último tag) del repositorio `Damet24/Astra2D` y copia el contenido de
+`src/templates/project/` en `<ruta>/<project-name>`. Si se omite `ruta`, usa `.`.
+
+Si la descarga falla (sin conexión, límite de la API, etc.), el CLI avisa y usa
+el `engine/` incluido en el paquete npm, así que `init` sigue funcionando sin red.
+Para repositorios privados o evitar límites de la API, define `GITHUB_TOKEN`.
 
 ```sh
 astra2d init mi-juego              # ./mi-juego
