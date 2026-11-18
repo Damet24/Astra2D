@@ -48,7 +48,7 @@ function MainMenu:onEnter()
 end
 
 function MainMenu:update(dt)
-    if self.context.inputManager:isJustPressed("menu_accept") then
+    if self.context.inputManager:isJustPressed("accept") then
         self.context.sceneManager:replace("levels.level01")
     end
 
