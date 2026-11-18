@@ -2,19 +2,19 @@
     "activeFile": "maps/vIllage.tmx",
     "expandedProjectPaths": [
         "maps/templates",
+        ".",
         "maps",
         "tilesets",
-        ".",
         "maps/templates/obj"
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
         "maps/vIllage.tmx": {
-            "scale": 0.5,
-            "selectedLayer": 3,
+            "scale": 3,
+            "selectedLayer": 1,
             "viewCenter": {
-                "x": 579,
-                "y": 232
+                "x": 2576.1666666666665,
+                "y": 182.33333333333331
             }
         },
         "tilesets/Terrain (16x16).tsx": {

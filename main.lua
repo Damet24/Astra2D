@@ -26,7 +26,11 @@ local engine = Engine.new({
 		height = GAME_RESOLUTION.height,
 		pixelPerfect = true,
 		backgroundColor = { 0.18, 0.25, 0.34 },
-	},
+    },
+
+    audio = {
+            masterVolume = 0.1,
+        },
 })
 
 function love.load()

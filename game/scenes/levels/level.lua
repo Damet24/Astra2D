@@ -18,6 +18,7 @@ local PlayerSystem = require("game.ecs.systems.playerSystem")
 local EnemySystem = require("game.ecs.systems.enemySystem")
 local GraphicsUtils = require("engine.graphics.utils")
 local SpriteFont = require("engine.graphics.spriteFont")
+local EnemySpawnSystem = require("game.ecs.systems.enemySpawnSystem")
 
 local function findPlayerSpawn(map)
     for _, layer in ipairs(map.layers) do
@@ -77,28 +78,6 @@ local function createPlayer(world, context, spawn, image, animations)
     local transform = assert(world:getComponent(entity, Components.Transform))
 
     return entity, transform
-end
-
-local function createEnemy(world, spawn, image, animations)
-    local entity = world:createEntity()
-    world:addComponent(entity, "Enemy")
-    world:addComponent(entity, Components.Transform, { x = spawn.x, y = spawn.y })
-    world:addComponent(entity, Components.Velocity, { x = 0, y = 0 })
-    world:addComponent(entity, Components.RigidBody, { type = "dynamic" })
-    world:addComponent(entity, Components.Collider, { shape = "rectangle", width = 18, height = 28 })
-    world:addComponent(entity, Components.Sprite, {
-        image = image,
-        layer = 40,
-        origin = { x = 16, y = 16 },
-        flipH = true,
-        animations = animations,
-    })
-    world:addComponent(entity, Components.Animation,
-        { current = "fall", frame = 1, timer = 0, playing = true, loop = true })
-    local body, fixture = PhysicsFactory.create(world, entity)
-    fixture:setFriction(0)
-    body:setFixedRotation(true)
-    world:addSystem(EnemySystem.new(entity))
 end
 
 local function drawStaticBackground(image, viewport, indexY)
@@ -192,7 +171,6 @@ function Level.new(context, config)
 
     self.context = context
     self.map = config.map
-    self.enemySpawns = config.enemySpawns or {}
     self.spawn = findPlayerSpawn(config.map) or { x = 80, y = 32 }
     self.tilesets = config.tilesets or {
         ["Terrain (16x16)"] = { resource = "terrain", tilewidth = 16, tileheight = 16 },
@@ -240,6 +218,9 @@ function Level:onLoad()
 
     local appleImage = resourceManager:get(self, "fruit_apple")
     local appleAnimation = utils.loadAnimation(appleImage, 32, 32, 0.05)
+
+
+
     for _, layer in ipairs(self.map.layers) do
         if layer.type == "objectgroup" and layer.name == "walls" then
             createWall(self.world, layer, self)
@@ -248,6 +229,12 @@ function Level:onLoad()
                 if object.name == "apple" and object.shape == "point" then
                     -- Coordenadas de ejemplo: ajústalas a tu mapa.
                     createCollectible(world, object.x, object.y, appleImage, appleAnimation)
+                elseif object.name == "enemySpawn" and object.shape == "point" then
+                    world:addComponent(world:createEntity(), "EnemySpawn", {
+                        x = object.x,
+                        y = object.y,
+                        type = object.properties["type"],
+                    })
                 end
             end
         end
@@ -264,16 +251,13 @@ function Level:onLoad()
     local player, transform = createPlayer(self.world, self.context, self.spawn, image, animations)
     self.player = player
 
-    if #self.enemySpawns > 0 then
-        local enemyImage = resourceManager:get(self, "mask_dude_run")
-        local enemyAnimations = {
-            run = utils.loadAnimation(enemyImage, 32, 32, 0.05),
-            fall = utils.loadAnimation(resourceManager:get(self, "mask_dude_fall"), 32, 32, 0.1),
-        }
-        for _, spawn in ipairs(self.enemySpawns) do
-            createEnemy(world, spawn, enemyImage, enemyAnimations)
-        end
-    end
+    local enemyImage = resourceManager:get(self, "mask_dude_run")
+    local enemyAnimations = {
+        run = utils.loadAnimation(enemyImage, 32, 32, 0.05),
+        fall = utils.loadAnimation(resourceManager:get(self, "mask_dude_fall"), 32, 32, 0.1),
+    }
+    world:addSystem(EnemySpawnSystem.new(player, enemyImage, enemyAnimations))
+    world:addSystem(EnemySystem)
 
     followWithinMap(assert(self.cameraManager:getActive()), transform.x, transform.y, self.map)
     local camX = select(1, assert(self.cameraManager:getActive()):getPosition())
@@ -296,11 +280,6 @@ function Level:onLoad()
         if not normal or not relativeVelocity then
             return
         end
-
-        print(
-            "Normal:", normal.x, normal.y,
-            "Relative velocity:", relativeVelocity.x, relativeVelocity.y
-        )
 
         local fromAbove = normal.y > 0.5
         local descending = relativeVelocity.y < 0
@@ -334,6 +313,7 @@ function Level:onLoad()
             })
 
             body:setLinearVelocity(knockbackX, velocityY)
+            self.lives = self.lives - 1
             velocity.x, velocity.y = knockbackX, velocityY
         end
     end)
@@ -432,7 +412,7 @@ function Level:draw()
     end)
 
     self.spriteFont:draw("score: " .. self.score, 0, 0)
-    self.spriteFont:draw("live: " .. self.lives, 0, 60)
+    self.spriteFont:draw("live: " .. self.lives, 100, 0)
 end
 
 return Level

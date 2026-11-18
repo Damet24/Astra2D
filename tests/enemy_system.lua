@@ -107,4 +107,65 @@ body.contacts = {
 }
 update()
 assert(animation.current == "run", "a valid floor among other contacts must count as grounded")
+
+-- LÖVE may hand out a different Lua proxy for the same Box2D body. The
+-- fixture userData is the reliable link to the enemy entity in that case.
+local proxyBody = { getUserData = function() return 7 end }
+local proxyEnemyFixture = {
+	getBody = function() return proxyBody end,
+	getUserData = function() return 7 end,
+	isSensor = function() return false end,
+}
+local proxyFloorFixture = {
+	getBody = function() return {} end,
+	isSensor = function() return false end,
+}
+body.contacts = {
+	{
+		isTouching = function() return true end,
+		isEnabled = function() return true end,
+		getFixtures = function() return proxyEnemyFixture, proxyFloorFixture end,
+		getNormal = function() return 0, 1 end,
+	},
+}
+animation.current, animation.frame, animation.timer = "unrelated", 8, 0.08
+update()
+assert(animation.current == "run", "a body proxy with matching fixture userData must count as grounded")
+
+-- The global system must only query entities marked as enemies, otherwise it
+-- tries to move the player, walls, collectibles and spawn markers too.
+local enemyComponents = {
+	["Enemy"] = true,
+	[Components.RigidBody] = components[Components.RigidBody],
+	[Components.Velocity] = components[Components.Velocity],
+	[Components.Animation] = components[Components.Animation],
+}
+local globalEntities = {
+	[7] = enemyComponents,
+	[8] = { [Components.Transform] = {} }, -- e.g. a spawn marker without physics
+}
+local queriedNames
+local globalWorld = {}
+function globalWorld:query(names, callback)
+	queriedNames = names
+	for entity, entityComponents in pairs(globalEntities) do
+		local matches = true
+		for _, name in ipairs(names) do
+			if not entityComponents[name] then
+				matches = false
+				break
+			end
+		end
+		if matches then
+			callback(entity, entityComponents)
+		end
+	end
+end
+
+velocity.x, velocity.y = 99, 999
+animation.current = "fall"
+EnemySystem.update(globalWorld)
+assert(queriedNames and queriedNames[1] == "Enemy", "global system must filter by the Enemy component")
+assert(velocity.x == -60 and velocity.y == body.y, "global system must move the enemy")
+assert(animation.current == "run", "global system must animate the grounded enemy")
 print("enemy system tests passed")

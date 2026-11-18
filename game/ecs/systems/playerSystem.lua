@@ -2,7 +2,7 @@ local Components = require("engine.ecs.component")
 
 local PLAYER_SPEED = 120
 local JUMP_SPEED = 300
-local MAX_JUMP = 2
+local MAX_JUMP = 1
 
 local function isGrounded(body)
 	for _, contact in ipairs(body:getContacts()) do
