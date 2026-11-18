@@ -63,28 +63,29 @@ Two ideas make the rest of the architecture easier to follow:
 
 ## The frame lifecycle
 
-Astra 2D does not replace LÖVE's main loop. `main.lua` forwards the callbacks it
-needs, and each one maps to an engine method:
+Astra 2D does not replace LÖVE's main loop. `main.lua` forwards the lifecycle callbacks, and each one maps to an engine method:
 
 | LÖVE callback | Engine method | What happens |
 | --- | --- | --- |
-| `love.load` | `Engine:load()` | Applies window settings and the background color, creates the viewport, pushes `initialScene`, and processes the pending transition. |
-| `love.update(dt)` | `Engine:update(dt)` | Updates the scene stack, then audio, then clears input state. |
+| `love.load` | `Engine:load()` | Applies window settings and the background color, creates the viewport, pushes `initialScene`, processes the pending transition, and installs the input callbacks. |
+| `love.update(dt)` | `Engine:update(dt)` | Dispatches events, updates gamepad axis edges, updates the scene stack, then audio, then clears transient input state and mouse delta. |
 | `love.draw` | `Engine:draw()` | Draws the scene stack inside the virtual-resolution viewport. |
-| `love.keypressed(key)` | `Engine:keypressed(key)` | Forwards the key to the input manager. |
-| `love.keyreleased(key)` | `Engine:keyreleased(key)` | Forwards the key to the input manager. |
 | `love.quit` | `Engine:quit()` | Destroys the scene stack, stops audio, and releases all resources. |
+
+During `Engine:load()`, the engine also installs its own handlers for `keypressed`, `keyreleased`, `mousepressed`, `mousereleased`, `mousemoved`, `gamepadpressed`, `gamepadreleased`, `gamepadaxis`, `joystickadded`, and `joystickremoved`. Games do not forward those events; each handler calls the matching engine method, which updates the `InputManager`.
 
 The order inside `Engine:update` is significant:
 
-1. `SceneManager:update(dt)` updates the active scenes and, at the end,
+1. `EventManager:dispatch()` delivers queued events, including gamepad connections.
+2. `InputManager:update()` recomputes gamepad axis states and their press/release edges.
+3. `SceneManager:update(dt)` updates the active scenes and, at the end,
    processes the transitions requested during the frame.
-2. `AudioManager:update(dt)` releases sounds that finished playing.
-3. `InputManager:update()` clears the "just pressed" and "just released" state,
-   so scenes can read it during their own update.
+4. `AudioManager:update(dt)` releases sounds that finished playing.
+5. `InputManager:reset()` clears the "just pressed" and "just released" state
+   and the mouse delta after the scenes have read them.
 
 Input is cleared last on purpose: a scene reads `isJustPressed` while it runs,
-and the flag is discarded only after the selected scenes have had the chance to react.
+and the flag is discarded only after the selected scenes have had the chance to react. Gamepad axes are already resolved before the scene update, so an axis binding reports its edges in the same frame.
 
 On shutdown, `Engine:quit()` queues a scene stack clear and processes pending
 scene operations. Operations already in the queue run before the clear. The
@@ -141,7 +142,7 @@ Your game provides descriptions and content; the engine provides the mechanisms.
 | `initialScene` | The first scene pushed onto the stack. |
 | `scenesPath` | The module prefix used to load scenes (default `game.scenes`). |
 | `resourceDefinitions` / `resourceLoaders` | The definitions and loaders used by the `ResourceManager`. |
-| `inputMaps` | The action table used by the `InputManager`. |
+| `inputMaps` | The action table used by the `InputManager`, including keyboard, mouse, and gamepad bindings. |
 | `window` / `rendering` / `audio` | Window mode, logical resolution, background, and volumes. |
 | Scene modules | Instances created by the `SceneLoader` and driven by the `SceneManager`. |
 | Worlds, systems, cameras, pipelines | Created by scenes as needed, commonly in `onLoad`. |

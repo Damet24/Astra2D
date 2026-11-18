@@ -4,7 +4,7 @@
 
 ## Responsabilidades y relaciones
 
-`Engine.new(config)` normaliza y valida la configuración y luego construye [ResourceManager](resource-manager.md), [AudioManager](audio-manager.md), [GameContext](game-context.md), [SceneLoader](scene-loader.md), [SceneManager](scene-manager.md) e [InputManager](input-manager.md). El gestor de audio comparte el gestor de recursos. El contexto se crea antes del gestor de escenas, se entrega al loader y se completa con los gestores de escenas y entrada. `load` añade el viewport de Shove a ese mismo contexto antes de cargar la escena inicial; consulta [renderizado](rendering.md). Las escenas reciben el contexto, no el motor.
+`Engine.new(config)` normaliza y valida la configuración y luego construye [ResourceManager](resource-manager.md), [AudioManager](audio-manager.md), [GameContext](game-context.md), [EventManager](/es/api/events), [SceneLoader](scene-loader.md), [SceneManager](scene-manager.md) e [InputManager](input-manager.md). El gestor de audio comparte el gestor de recursos. El contexto se crea antes del gestor de escenas, se entrega al loader y se completa con los gestores de escenas, eventos y entrada. `load` añade el viewport de Shove a ese mismo contexto antes de cargar la escena inicial; consulta [renderizado](rendering.md). Las escenas reciben el contexto, no el motor.
 
 ## Configuración
 
@@ -14,7 +14,7 @@
 | --- | --- | --- |
 | `initialScene` | **Obligatorio**, cadena no vacía | Identificador de la escena inicial, resuelto respecto de `scenesPath`. |
 | `scenesPath` | `"game.scenes"`; cadena no vacía | Prefijo de módulos Lua para las escenas. |
-| `inputMaps` | Tabla **obligatoria**; `{}` es válida | Los nombres de acciones se asignan a arrays contiguos no vacíos de cadenas de teclas no vacías, sin duplicados dentro de una acción. Los nombres deben ser cadenas no vacías. Lo valida `InputManager.new`, no el validador de configuración del motor. |
+| `inputMaps` | Tabla **obligatoria**; `{}` es válida | Las acciones se asignan a tablas con secciones opcionales `keys`, `mouse` y `gamepad`. El motor pasa la tabla a `InputManager` sin validar su forma. |
 | `resourceDefinitions` | `{}`; tabla | Definiciones indexadas por ID de recurso. |
 | `resourceLoaders` | `engine.resources.loaders.loaders`; tabla | Cargadores indexados por tipo de recurso; el predeterminado incluye `image`, `sound` y `font`. Una tabla suministrada lo reemplaza. |
 | `window` | Si se omite: no se llama a `love.window.setMode` | Si se proporciona, debe ser una tabla con `width` y `height` enteros positivos finitos (ambos obligatorios). `fullscreen` vale `false`, `resizable` `true` y `vsync` `true` por defecto; cada uno debe ser booleano. |
@@ -32,13 +32,13 @@
 | Método | Comportamiento |
 | --- | --- |
 | `Engine.new(config)` | Crea los servicios y devuelve un motor; no carga una escena. |
-| `engine:load()` | Configura opcionalmente la ventana, establece el fondo, configura el viewport, encola `initialScene` y procesa un lote pendiente. Rechaza un motor ya cargado o cerrado. |
-| `engine:update(dt)` | Actualiza escenas y procesa sus transiciones pendientes, actualiza audio y finalmente limpia los indicadores de entrada recién pulsada/soltada. No hace nada antes de cargar o después de cerrar. |
+| `engine:load()` | Configura opcionalmente la ventana, establece el fondo, configura el viewport, encola `initialScene`, procesa un lote pendiente e instala los callbacks de entrada de LÖVE. Rechaza un motor ya cargado o cerrado. |
+| `engine:update(dt)` | Despacha los eventos encolados, recalcula los flancos de los ejes del mando, actualiza escenas y procesa sus transiciones pendientes, actualiza audio y finalmente limpia los indicadores transitorios de entrada y el delta del ratón. No hace nada antes de cargar o después de cerrar. |
 | `engine:draw()` | Envuelve el dibujo de escenas con `beginDraw`/`endDraw` del viewport. No hace nada antes de cargar o después de cerrar. |
-| `engine:keypressed(key)`, `engine:keyreleased(key)` | Reenvían la tecla de LÖVE a `InputManager`; estos métodos no comprueban si el motor está cargado o cerrado. |
+| `engine:keypressed(key)`, `engine:keyreleased(key)`, `engine:mousepressed(...)`, `engine:mousereleased(...)`, `engine:mousemoved(...)`, `engine:gamepadpressed(...)`, `engine:gamepadreleased(...)`, `engine:gamepadaxis(...)`, `engine:joystickadded(...)`, `engine:joystickremoved(...)` | Reenvían el evento de entrada de LÖVE a `InputManager`; estos métodos no comprueban si el motor está cargado o cerrado. |
 | `engine:quit()` | Encola `clear`, procesa un lote pendiente, apaga audio, libera los recursos restantes y marca el motor como cerrado. Una llamada posterior tras un cierre exitoso no hace nada. |
 
-La entrada se limpia después de actualizar todas las escenas seleccionadas, que pueden consultar `isJustPressed` e `isJustReleased` durante esa actualización. Al cerrar, las operaciones ya encoladas se ejecutan **antes** del vaciado. Este llama a `onExit` solo en la escena superior y después a `onDestroy` en todas, de arriba hacia abajo. Las operaciones encoladas por callbacks del ciclo de vida durante el procesamiento permanecen en el siguiente lote; `quit` no lo vacía. Las fases no están protegidas contra errores: un fallo puede impedir la limpieza posterior y dejar el motor sin marcar como cerrado. Consulta el orden preciso en [SceneManager](scene-manager.md).
+La entrada se limpia después de actualizar todas las escenas seleccionadas, que pueden consultar `isJustPressed` e `isJustReleased` durante esa actualización. Los ejes del mando se convierten en flancos antes de actualizar las escenas. Al cerrar, las operaciones ya encoladas se ejecutan **antes** del vaciado. Este llama a `onExit` solo en la escena superior y después a `onDestroy` en todas, de arriba hacia abajo. Las operaciones encoladas por callbacks del ciclo de vida durante el procesamiento permanecen en el siguiente lote; `quit` no lo vacía. Las fases no están protegidas contra errores: un fallo puede impedir la limpieza posterior y dejar el motor sin marcar como cerrado. Consulta el orden preciso en [SceneManager](scene-manager.md).
 
 ## Ejemplo: punto de entrada de LÖVE
 
@@ -56,9 +56,7 @@ local engine = Engine.new({
 function love.load() engine:load() end
 function love.update(dt) engine:update(dt) end
 function love.draw() engine:draw() end
-function love.keypressed(key) engine:keypressed(key) end
-function love.keyreleased(key) engine:keyreleased(key) end
 function love.quit() engine:quit() end
 ```
 
-Reenvía **ambos** callbacks de teclado: de lo contrario, el estado de tecla mantenida o soltada puede ser incorrecto. `load` y `quit` no son transaccionales; un error en un callback de escena puede interrumpir cualquiera de las operaciones.
+`Engine:load()` instala los callbacks de teclado, ratón, mando y joystick de LÖVE, sustituyendo los manejadores definidos antes de `load`. No los reenvíes desde `main.lua`; un manejador personalizado debe instalarse después de `load` y llamar al método correspondiente del motor. `load` y `quit` no son transaccionales; un error en un callback de escena puede interrumpir cualquiera de las operaciones.

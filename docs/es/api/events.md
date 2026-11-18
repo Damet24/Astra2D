@@ -1,6 +1,6 @@
 # Eventos
 
-`require("engine.core.events")` implementa un gestor de eventos encolados. Cada [mundo](world.md) crea uno en `world.events`; `EventManager.new()` también devuelve un gestor independiente. Los métodos siguientes no devuelven valores ni validan explícitamente los tipos de argumentos.
+`require("engine.core.events")` implementa un gestor de eventos encolados. Cada [mundo](world.md) crea uno en `world.events`; [Engine](engine.md) crea otro y lo expone como `context.events`; `EventManager.new()` también devuelve un gestor independiente. Los métodos siguientes no devuelven valores ni validan explícitamente los tipos de argumentos.
 
 ## API
 
@@ -28,3 +28,5 @@ events:flush()
 ```
 
 `CollisionSystem` emite `collision_started` y `collision_ended` con `{ entityA, entityB }`. Los eventos de inicio también contienen `normalX`/`normalY` (solo en contactos sin sensores), las velocidades de ambos cuerpos `velocityAX`/`velocityAY` y `velocityBX`/`velocityBY`, y los booleanos `sensorA`/`sensorB`; consulta [física](physics.md) para los datos completos. `World:onCollisionStarted` y `World:onCollisionEnded` envuelven estos eventos con callbacks por entidad y una función de desuscripción; consulta [world](world.md). Consulta también la [arquitectura de World](../architecture/modules/world.md) y la [guía de ECS](../guides/ecs.md).
+
+`InputManager` emite `gamepad_connected` y `gamepad_disconnected` a través del gestor del motor cuando empieza o deja de seguir un mando. Ambos contienen `{ joystick, name }`, donde `name` es `joystick:getName()`. El motor despacha los eventos encolados al inicio del siguiente `Engine:update(dt)`, así que suscríbete con `context.events:on(...)`.

@@ -1,30 +1,36 @@
-# Moverse con acciones y detectar eventos de teclas
+# Asignar acciones de teclado, ratón y mando
 
 ## Objetivo y requisitos
 
-Mueve un marcador con dos teclas y cuenta pulsaciones y liberaciones. Parte de [Tu primer proyecto](/es/getting-started/first-project), incluidos su directorio `engine/` y los callbacks de LÖVE. No se necesitan recursos personalizados.
+Mueve un marcador con teclas, clics de ratón o un mando, y cuenta pulsaciones y liberaciones. Parte de [Tu primer proyecto](/es/getting-started/first-project), incluido su directorio `engine/`. No se necesitan recursos personalizados. El motor instala los callbacks de entrada de LÖVE durante `Engine:load()`, así que `main.lua` solo reenvía `load`, `update`, `draw` y `quit`.
 
-## 1. Asignar teclas a las acciones
+## 1. Asignar acciones a dispositivos
 
 Añade estas entradas a la tabla de `game/inputMaps.lua`, conservando las demás acciones:
 
 ```lua
-guide_left = { "left", "a" },
-guide_right = { "right", "d" },
-guide_count = { "space" },
+guide_left = {
+    keys = { "left", "a" },
+    gamepad = {
+        "dpleft",
+        axes = { leftx = -1 },
+    },
+},
+guide_right = {
+    keys = { "right", "d" },
+    gamepad = {
+        "dpright",
+        axes = { leftx = 1 },
+    },
+},
+guide_count = {
+    keys = { "space" },
+    mouse = { 1 },
+    gamepad = { "a" },
+},
 ```
 
-Son entradas de tabla. Asegúrate de que `Engine.new` reciba `inputMaps = require("game.inputMaps")` y establece `initialScene = "guideInput"`. En `main.lua`, mantén los callbacks del primer proyecto, especialmente:
-
-```lua
-function love.keypressed(key)
-    engine:keypressed(key)
-end
-
-function love.keyreleased(key)
-    engine:keyreleased(key)
-end
-```
+Cada acción es una tabla con secciones opcionales `keys`, `mouse` y `gamepad`. `keys` contiene nombres de teclas de LÖVE, `mouse` contiene números de botón de LÖVE (`1` izquierdo, `2` derecho, `3` central) y `gamepad` contiene nombres de botón de mando de LÖVE y una tabla opcional `axes` que asigna un nombre de eje a `-1` o `1`. Asegúrate de que `Engine.new` reciba `inputMaps = require("game.inputMaps")` y establece `initialScene = "guideInput"`.
 
 ## 2. Crear la escena de entrada
 
@@ -40,6 +46,7 @@ function InputScene.new(context)
     local self = setmetatable(Scene.new(), InputScene)
     self.context = context
     self.x = 160
+    self.y = 90
     self.presses = 0
     self.releases = 0
     return self
@@ -50,15 +57,21 @@ function InputScene:update(dt)
     local direction = 0
     if input:isDown("guide_left") then direction = direction - 1 end
     if input:isDown("guide_right") then direction = direction + 1 end
-    self.x = math.max(0, math.min(304, self.x + direction * 100 * dt))
+    self.x = math.max(8, math.min(312, self.x + direction * 100 * dt))
+
     if input:isJustPressed("guide_count") then self.presses = self.presses + 1 end
     if input:isJustReleased("guide_count") then self.releases = self.releases + 1 end
 end
 
 function InputScene:draw()
-    love.graphics.print("Arrows/A/D: move; Space: count", 8, 8)
-    love.graphics.print("Presses: " .. self.presses .. " Releases: " .. self.releases, 8, 28)
-    love.graphics.rectangle("fill", self.x, 70, 16, 16)
+    local input = self.context.inputManager
+    local mx, my = input:getMousePosition()
+
+    love.graphics.print("Flechas/A/D o cruceta/stick: mover", 8, 8)
+    love.graphics.print("Espacio, clic o botón A: contar", 8, 28)
+    love.graphics.print("Pulsaciones: " .. self.presses .. " Liberaciones: " .. self.releases, 8, 48)
+    love.graphics.print("Ratón: " .. mx .. ", " .. my, 8, 68)
+    love.graphics.rectangle("fill", self.x, self.y, 16, 16)
 end
 
 return InputScene
@@ -66,20 +79,34 @@ return InputScene
 
 ## 3. Ejecutar y observar
 
-Ejecuta `love .` desde la raíz del proyecto. Mantén pulsada Izquierda/A o Derecha/D para moverte; pulsa y suelta Espacio para actualizar los dos contadores. Las direcciones opuestas se cancelan. Los límites suponen la anchura lógica de 320 píxeles del primer proyecto; adáptalos si usas otra resolución. `game/inputMaps.lua` y `game/ecs/systems/playerSystem.lua` del juego de ejemplo también asignan y consultan acciones.
+Ejecuta `love .` desde la raíz del proyecto. Mantén pulsada Izquierda/A, Derecha/D, la cruceta o el stick izquierdo para moverte; pulsa y suelta Espacio, un botón del ratón o el botón A del mando para actualizar los contadores. Las direcciones opuestas se cancelan. Los límites suponen el viewport lógico de `320 x 180` del primer proyecto; adáptalos si usas otra resolución. `game/inputMaps.lua` y `game/ecs/systems/playerSystem.lua` del juego de ejemplo también asignan y consultan acciones.
 
-## Ciclo de vida por frame y eventos de teclas
+## Ciclo de vida por frame y flancos
 
-LÖVE envía eventos de teclado al motor. Durante `Engine:update(dt)`, las escenas leen el estado actual; después de las transiciones de escena y del update de audio, el motor borra los eventos transitorios. `isDown` permanece en `true` mientras se mantenga cualquier tecla asignada; `isJustPressed` e `isJustReleased` describen eventos de tecla desde el último update de input. Las consultas no los consumen. No limpies el input manualmente antes de actualizar las escenas.
+`Engine:load()` sustituye los manejadores de LÖVE `keypressed`, `keyreleased`, `mousepressed`, `mousereleased`, `mousemoved`, `gamepadpressed`, `gamepadreleased`, `gamepadaxis`, `joystickadded` y `joystickremoved` por los suyos. No reenvíes esos callbacks manualmente. Si el juego necesita un tratamiento adicional, define sus callbacks después de `engine:load()` y llama también al método correspondiente del motor.
 
-Los eventos se registran por tecla y se combinan con OR: soltar una tecla asignada puede indicar una liberación mientras otra sigue pulsada. Pulsar y soltar entre updates puede hacer que ambas consultas de eventos sean verdaderas. Los eventos de pulsación repetidos mientras se mantiene la tecla no crean nuevos eventos de pulsación.
+Durante `Engine:update(dt)` el motor despacha los eventos encolados, recalcula los flancos de los ejes del mando, actualiza las escenas, actualiza el audio y, por último, borra los eventos transitorios y el delta del ratón. `isDown` permanece en `true` mientras se mantenga cualquier asignación; `isJustPressed` e `isJustReleased` describen las asignaciones que cambiaron desde el frame anterior. Las consultas no consumen los eventos, y pulsar una asignación que ya estaba activa no crea otra pulsación.
+
+Los flancos se registran por asignación y se combinan con OR entre dispositivos: soltar una asignación puede indicar una liberación mientras otra sigue activa, y pulsar y soltar entre actualizaciones puede hacer que ambas consultas devuelvan `true`.
+
+## Ratón
+
+`InputManager` guarda la última posición del ratón al pulsar, soltar y mover, y acumula el desplazamiento en un delta por frame que `reset()` borra. `getMousePosition()` y `getMouseDelta()` devuelven coordenadas de ventana, no del viewport lógico; conviértelas con `context.viewport.screenToViewport(...)` antes de dibujar o de compararlas con posiciones del mundo de una cámara.
+
+## Mando
+
+Solo se sigue el primer mando conectado. Un segundo mando se ignora hasta que se retire el primero. Los botones usan nombres de LÖVE como `a`, `b`, `x`, `y`, `dpup`, `dpleft` o `start`. Los ejes usan nombres como `leftx`, `lefty` o `triggerleft` y cuentan como pulsados cuando su valor alcanza `0.5` en valor absoluto; `-1` lee la mitad negativa del eje y `1` la positiva. Las asignaciones por eje necesitan al menos un `InputManager:update()` antes de informar de su estado.
+
+Cuando se conecta o retira un mando, el gestor emite `gamepad_connected` o `gamepad_disconnected` a través del gestor de eventos del motor. Ambos datos contienen `{ joystick = joystick, name = joystick:getName() }`; consulta [Eventos](/es/api/events).
 
 ## Errores y limitaciones
 
-- `inputMaps` es obligatorio, aunque esté vacío. Cada acción necesita un array contiguo no vacío de cadenas de teclas únicas y no vacías; las tablas incorrectas fallan al construir el gestor. Los nombres de acción desconocidos devuelven `false`, y las cadenas de teclas no se validan contra la lista de LÖVE.
-- Solo se gestionan callbacks de teclado; cadenas que parecen botones de gamepad no añaden soporte para gamepad. Los callbacks imprimen actualmente las teclas en la consola.
-- El estado de tecla pulsada no se borra automáticamente al perder el foco. El gestor conserva la tabla de asignaciones proporcionada en lugar de copiarla.
+- Los mapas no se validan. Se puede consultar cualquier nombre de acción: las acciones desconocidas devuelven `false`, y una acción sin `keys`, `mouse` ni `gamepad` simplemente no tiene asignaciones. Un valor de acción que no sea una tabla falla al consultarlo.
+- Los nombres de teclas, botones, ejes y mandos no se contrastan con LÖVE; un error tipográfico nunca coincide.
+- El estado mantenido no se borra automáticamente al perder el foco. El gestor conserva la tabla de asignaciones proporcionada en lugar de copiarla.
+- Los números de botón del ratón y los nombres del mando siguen las convenciones de LÖVE; esta página no los traduce por plataforma.
+- `InputManager` solo emite eventos de mando cuando recibe un gestor de eventos; el motor siempre proporciona uno.
 
 ## Más información
 
-[Arquitectura de InputManager](/es/architecture/modules/input-manager) · [Arquitectura de Engine](/es/architecture/modules/engine) · [API de InputManager](/es/api/input-manager).
+[Arquitectura de InputManager](/es/architecture/modules/input-manager) · [Arquitectura de Engine](/es/architecture/modules/engine) · [API de InputManager](/es/api/input-manager) · [API de Eventos](/es/api/events).

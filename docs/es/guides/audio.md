@@ -2,7 +2,7 @@
 
 ## Objetivo y requisitos
 
-Inicia música en bucle, dispara un efecto y pausa o reinicia la música. Parte de [Tu primer proyecto](/es/getting-started/first-project), incluidos sus callbacks de LÖVE. Proporciona tus propios archivos de audio compatibles con LÖVE en `game/assets/guide-music.ogg` y `game/assets/guide-effect.wav`; un proyecto nuevo no los incluye.
+Inicia música en bucle, dispara un efecto y pausa o reinicia la música. Parte de [Tu primer proyecto](/es/getting-started/first-project), incluida su configuración del motor. Proporciona tus propios archivos de audio compatibles con LÖVE en `game/assets/guide-music.ogg` y `game/assets/guide-effect.wav`; un proyecto nuevo no los incluye.
 
 ## 1. Registrar sonidos y acciones
 
@@ -16,9 +16,9 @@ guide_effect = { type = "sound", path = "game/assets/guide-effect.wav", soundTyp
 Añade estas entradas a `game/inputMaps.lua`, conservando las existentes en ambas tablas:
 
 ```lua
-guide_effect = { "space" },
-guide_music_pause = { "m" },
-guide_music_restart = { "r" },
+guide_effect = { keys = { "space" } },
+guide_music_pause = { keys = { "m" } },
+guide_music_restart = { keys = { "r" } },
 ```
 
 Son fragmentos de entradas de tabla. Asegúrate de que `Engine.new` reciba `resourceDefinitions = require("game.resources.definitions")` e `inputMaps = require("game.inputMaps")`; establece `initialScene = "guideAudio"`. El motor usa por defecto `1.0` en los tres volúmenes de audio. Opcionalmente, sustituye la tabla `audio` existente de la configuración del motor por `audio = { masterVolume = 1.0, musicVolume = 0.5, sfxVolume = 0.8 }`.

@@ -2,11 +2,11 @@
 
 ## Goal and prerequisites
 
-Create a running counter and a pause overlay. Escape pauses and resumes it; the counter remains visible underneath. Start from [Your First Project](/getting-started/first-project), including its LÖVE callbacks and `engine/` directory. This tutorial creates its own scenes and needs no image or audio files.
+Create a running counter and a pause overlay. Escape pauses and resumes it; the counter remains visible underneath. Start from [Your First Project](/getting-started/first-project), including its `engine/` directory. This tutorial creates its own scenes and needs no image or audio files.
 
 ## 1. Configure the action and initial scene
 
-Add `pause = { "escape" }` to the table in `game/inputMaps.lua`, keeping any existing actions. In `main.lua`, set `initialScene = "guideLevel"` in `Engine.new`; keep `inputMaps = require("game.inputMaps")` and the existing callbacks.
+Add `pause = { keys = { "escape" } }` to the table in `game/inputMaps.lua`, keeping any existing actions. In `main.lua`, set `initialScene = "guideLevel"` in `Engine.new` and keep `inputMaps = require("game.inputMaps")`; the engine installs the LÖVE input callbacks during `Engine:load()`.
 
 ## 2. Create the running scene
 

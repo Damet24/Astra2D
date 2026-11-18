@@ -1,6 +1,6 @@
 # Events
 
-`require("engine.core.events")` implements a queued event manager. Every [world](world.md) creates one at `world.events`; `EventManager.new()` also returns an independent manager. Methods below return no values and do not explicitly validate argument types.
+`require("engine.core.events")` implements a queued event manager. Every [world](world.md) creates one at `world.events`; [Engine](engine.md) creates another and exposes it as `context.events`; `EventManager.new()` also returns an independent manager. Methods below return no values and do not explicitly validate argument types.
 
 ## API
 
@@ -28,3 +28,5 @@ events:flush()
 ```
 
 `CollisionSystem` emits `collision_started` and `collision_ended` with `{ entityA, entityB }`. Started events also carry `normalX`/`normalY` (non-sensor contacts only), both bodies' `velocityAX`/`velocityAY` and `velocityBX`/`velocityBY`, and `sensorA`/`sensorB`; see [physics](physics.md) for the full payload. `World:onCollisionStarted` and `World:onCollisionEnded` wrap these events with entity-scoped callbacks and an unsubscribe function; see [world](world.md). See also [world architecture](../architecture/modules/world.md) and the [ECS guide](../guides/ecs.md).
+
+`InputManager` emits `gamepad_connected` and `gamepad_disconnected` through the engine's manager when it starts or stops tracking a gamepad. Both carry `{ joystick, name }`, where `name` is `joystick:getName()`. The engine dispatches queued events at the start of the next `Engine:update(dt)`, so subscribe with `context.events:on(...)`.

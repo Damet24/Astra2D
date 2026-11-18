@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-Start with the [first project](/getting-started/first-project) and LÖVE, including the `move_left` and `move_right` input actions and forwarded key callbacks. This example fits its `320 × 180` logical viewport. A scene owns the `World`; neither the engine nor the scene manager creates or updates it automatically.
+Start with the [first project](/getting-started/first-project) and LÖVE, including the `move_left` and `move_right` input actions. This example fits its `320 × 180` logical viewport. A scene owns the `World`; neither the engine nor the scene manager creates or updates it automatically.
 
 ## 1. Create a scene with an entity and a system
 

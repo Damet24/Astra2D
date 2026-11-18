@@ -4,7 +4,7 @@
 
 ## Responsibilities and relationships
 
-`Engine.new(config)` normalizes and validates configuration, then constructs [ResourceManager](resource-manager.md), [AudioManager](audio-manager.md), [GameContext](game-context.md), [SceneLoader](scene-loader.md), [SceneManager](scene-manager.md), and [InputManager](input-manager.md). The audio manager shares the resource manager. The context is created before the scene manager, passed to the loader, and populated with the scene and input managers. `load` adds the Shove viewport to that same context before loading the initial scene; see [rendering](rendering.md). Scenes receive the context, not the engine.
+`Engine.new(config)` normalizes and validates configuration, then constructs [ResourceManager](resource-manager.md), [AudioManager](audio-manager.md), [GameContext](game-context.md), [EventManager](/api/events), [SceneLoader](scene-loader.md), [SceneManager](scene-manager.md), and [InputManager](input-manager.md). The audio manager shares the resource manager. The context is created before the scene manager, passed to the loader, and populated with the scene, event, and input managers. `load` adds the Shove viewport to that same context before loading the initial scene; see [rendering](rendering.md). Scenes receive the context, not the engine.
 
 ## Configuration
 
@@ -14,7 +14,7 @@
 | --- | --- | --- |
 | `initialScene` | **Required**, non-empty string | Initial scene identifier, resolved relative to `scenesPath`. |
 | `scenesPath` | `"game.scenes"`; non-empty string | Lua module prefix for scenes. |
-| `inputMaps` | **Required** table; `{}` is valid | Action names map to non-empty contiguous arrays of non-empty key strings, without duplicates within an action. Names must be non-empty strings. Validated by `InputManager.new`, not by the engine's config validator. |
+| `inputMaps` | **Required** table; `{}` is valid | Actions map to tables with optional `keys`, `mouse`, and `gamepad` sections. The engine passes the table to `InputManager` without validating its shape. |
 | `resourceDefinitions` | `{}`; table | Definitions keyed by resource ID. |
 | `resourceLoaders` | `engine.resources.loaders.loaders`; table | Loader table keyed by resource type; the default has `image`, `sound`, and `font`. A supplied table replaces it. |
 | `window` | Omitted: no `love.window.setMode` call | If supplied, must be a table with positive finite integer `width` and `height` (both required). `fullscreen` defaults to `false`, `resizable` to `true`, and `vsync` to `true`; each must be boolean. |
@@ -32,13 +32,13 @@
 | Method | Behavior |
 | --- | --- |
 | `Engine.new(config)` | Creates services and returns an engine; it does not load a scene. |
-| `engine:load()` | Optionally sets window mode, sets the background, configures the viewport, queues `initialScene`, and processes one pending batch. Rejects an already loaded or closed engine. |
-| `engine:update(dt)` | Updates scenes and processes their pending transitions, updates audio, then clears input's just-pressed/just-released flags. No-op before load or after close. |
+| `engine:load()` | Optionally sets window mode, sets the background, configures the viewport, queues `initialScene`, processes one pending batch, then installs the LÖVE input callbacks. Rejects an already loaded or closed engine. |
+| `engine:update(dt)` | Dispatches queued events, recomputes gamepad axis edges, updates scenes and processes their pending transitions, updates audio, then clears input's transient flags and mouse delta. No-op before load or after close. |
 | `engine:draw()` | Wraps scene drawing in viewport `beginDraw`/`endDraw`. No-op before load or after close. |
-| `engine:keypressed(key)`, `engine:keyreleased(key)` | Forward the LÖVE key to `InputManager`; these methods are not guarded by the loaded/closed flags. |
+| `engine:keypressed(key)`, `engine:keyreleased(key)`, `engine:mousepressed(...)`, `engine:mousereleased(...)`, `engine:mousemoved(...)`, `engine:gamepadpressed(...)`, `engine:gamepadreleased(...)`, `engine:gamepadaxis(...)`, `engine:joystickadded(...)`, `engine:joystickremoved(...)` | Forward the LÖVE input event to `InputManager`; these methods are not guarded by the loaded/closed flags. |
 | `engine:quit()` | Queues `clear`, processes one pending batch, shuts down audio, releases remaining resources, then marks the engine closed. A later successful call is a no-op. |
 
-Input is cleared after all selected scenes update, allowing them to inspect `isJustPressed` and `isJustReleased` during that update. During shutdown, previously queued operations run **before** the clear. Clear exits only the top scene, then destroys all scenes top to bottom. Operations queued by lifecycle callbacks during processing remain in the next batch; `quit` does not drain that batch. The phases are not protected against errors: a failure can prevent later cleanup and leave the engine not marked closed. See [SceneManager](scene-manager.md) for precise ordering.
+Input is cleared after all selected scenes update, allowing them to inspect `isJustPressed` and `isJustReleased` during that update. Gamepad axes are converted to edges before the scenes update. During shutdown, previously queued operations run **before** the clear. Clear exits only the top scene, then destroys all scenes top to bottom. Operations queued by lifecycle callbacks during processing remain in the next batch; `quit` does not drain that batch. The phases are not protected against errors: a failure can prevent later cleanup and leave the engine not marked closed. See [SceneManager](scene-manager.md) for precise ordering.
 
 ## Example: LÖVE entry point
 
@@ -56,9 +56,7 @@ local engine = Engine.new({
 function love.load() engine:load() end
 function love.update(dt) engine:update(dt) end
 function love.draw() engine:draw() end
-function love.keypressed(key) engine:keypressed(key) end
-function love.keyreleased(key) engine:keyreleased(key) end
 function love.quit() engine:quit() end
 ```
 
-Forward **both** keyboard callbacks: otherwise held or release state can be incorrect. `load` and `quit` are not transactional; an error in a scene callback can interrupt either operation.
+`Engine:load()` installs the LÖVE keyboard, mouse, gamepad, and joystick callbacks, replacing any handlers defined before `load`. Do not forward them from `main.lua`; a custom handler must be installed after `load` and call the corresponding engine method. `load` and `quit` are not transactional; an error in a scene callback can interrupt either operation.

@@ -12,9 +12,10 @@ Módulo: `require("engine.core.gameContext")`. Contenedor mutable de servicios c
 | `audioManager` | Obligatorio al construir; [AudioManager](audio-manager.md) compartido. |
 | `sceneManager` | Opcional al construir; [Engine](engine.md) lo asigna después de crear el cargador y el gestor. |
 | `inputManager` | Lo asigna `Engine.new`, no este constructor. |
+| `events` | Lo asigna `Engine.new`; [EventManager](events.md) compartido. |
 | `viewport` | Lo asigna `Engine:load()` antes de construir la escena inicial. |
 
-El [SceneLoader](scene-loader.md) integrado pasa la misma referencia al contexto a cada constructor de escena. Los contextos construidos manualmente no reciben entrada ni viewport automáticamente, aunque esas claves se incluyan en `services`. El contenedor no actualiza ni libera los servicios.
+El [SceneLoader](scene-loader.md) integrado pasa la misma referencia al contexto a cada constructor de escena. Los contextos construidos manualmente no reciben entrada, eventos ni viewport automáticamente, aunque esas claves se incluyan en `services`. El contenedor no actualiza ni libera los servicios.
 
 ## Ejemplo
 

@@ -2,11 +2,11 @@
 
 ## Objetivo y requisitos
 
-Crea un contador en marcha y una superposición de pausa. Escape pausa y reanuda el contador, que permanece visible debajo. Parte de [Tu primer proyecto](/es/getting-started/first-project), incluidos sus callbacks de LÖVE y el directorio `engine/`. Este tutorial crea sus propias escenas y no necesita archivos de imagen ni audio.
+Crea un contador en marcha y una superposición de pausa. Escape pausa y reanuda el contador, que permanece visible debajo. Parte de [Tu primer proyecto](/es/getting-started/first-project), incluido el directorio `engine/`. Este tutorial crea sus propias escenas y no necesita archivos de imagen ni audio.
 
 ## 1. Configurar la acción y la escena inicial
 
-Añade `pause = { "escape" }` a la tabla de `game/inputMaps.lua`, conservando las demás acciones. En `main.lua`, establece `initialScene = "guideLevel"` en `Engine.new`; mantén `inputMaps = require("game.inputMaps")` y los callbacks existentes.
+Añade `pause = { keys = { "escape" } }` a la tabla de `game/inputMaps.lua`, conservando las demás acciones. En `main.lua`, establece `initialScene = "guideLevel"` en `Engine.new` y mantén `inputMaps = require("game.inputMaps")`; el motor instala los callbacks de entrada de LÖVE durante `Engine:load()`.
 
 ## 2. Crear la escena en marcha
 

@@ -20,8 +20,9 @@ La carpeta debe llamarse `engine`, porque los módulos del motor se importan ent
 
 ## 1. Configurar el punto de entrada
 
-Crea `main.lua`. Construye el motor una vez y luego reenvía los callbacks de
-LÖVE:
+Crea `main.lua`. Construye el motor una vez y reenvía los callbacks de ciclo de
+vida. `Engine:load()` instala por sí mismo los callbacks de entrada, así que
+`main.lua` no reenvía eventos de teclado, ratón, mando ni joystick:
 
 ```lua
 local Engine = require("engine.engine")
@@ -62,14 +63,6 @@ function love.draw()
     engine:draw()
 end
 
-function love.keypressed(key)
-    engine:keypressed(key)
-end
-
-function love.keyreleased(key)
-    engine:keyreleased(key)
-end
-
 function love.quit()
     engine:quit()
 end
@@ -79,19 +72,24 @@ Aquí se proporcionan los campos obligatorios `initialScene` e `inputMaps`; `sce
 
 ## 2. Definir las acciones de entrada
 
-Crea `game/inputMaps.lua`. Las acciones son arrays con nombre de teclas de LÖVE:
+Crea `game/inputMaps.lua`. Cada acción es una tabla con secciones opcionales `keys`, `mouse` y `gamepad`:
 
 ```lua
 return {
-    move_left = { "left", "a" },
-    move_right = { "right", "d" },
-    move_up = { "up", "w" },
-    move_down = { "down", "s" },
+    move_left = {
+        keys = { "left", "a" },
+        gamepad = { "dpleft", axes = { leftx = -1 } },
+    },
+    move_right = {
+        keys = { "right", "d" },
+        gamepad = { "dpright", axes = { leftx = 1 } },
+    },
+    move_up = { keys = { "up", "w" } },
+    move_down = { keys = { "down", "s" } },
 }
 ```
 
-Cada acción debe tener al menos un atajo, los índices deben ser contiguos y una
-misma acción no puede listar la misma tecla dos veces.
+Cada sección lista nombres de asignación de LÖVE o, para `mouse`, números de botón; la tabla opcional `gamepad.axes` asigna un nombre de eje a `-1` o `1`. Las acciones no necesitan todas las secciones y el motor no valida los nombres: las acciones desconocidas devuelven `false` y los errores tipográficos nunca coinciden. Consulta la [guía de entrada](/es/guides/input) para ratón, mando y comportamiento de los flancos.
 
 ## 3. Crear la primera escena
 
@@ -179,11 +177,13 @@ Cuando LÖVE llama a `love.load`, `Engine:load()`:
 2. Crea el viewport de resolución virtual.
 3. Apila `initialScene` en la pila de escenas.
 4. Llama a los callbacks `onLoad` y `onEnter` de la escena.
+5. Instala los callbacks de teclado, ratón, mando y joystick de LÖVE.
 
-En cada frame, `Engine:update()` actualiza la escena, luego el audio y por último
-la entrada. `InputManager:isDown(action)` comprueba las teclas asignadas a esa
-acción. Al final de la actualización, el gestor borra su estado de "recién
-pulsado" y "recién soltado".
+En cada frame, `Engine:update()` despacha los eventos encolados, recalcula los
+flancos de los ejes del mando, actualiza la escena, actualiza el audio y por
+último borra los flancos transitorios de entrada y el delta del ratón.
+`InputManager:isDown(action)` comprueba todas las asignaciones de esa acción,
+provengan del teclado, el ratón o el mando.
 
 `Engine:draw()` dibuja la pila de escenas a través del viewport, que escala la
 resolución lógica a la ventana.
@@ -206,9 +206,9 @@ actual haya terminado de actualizarse.
   devolver una tabla con un constructor `new`.
 - **No se encuentra la escena.** Revisa el identificador `initialScene` y el
   prefijo `scenesPath`. Los puntos se traducen a separadores de carpeta.
-- **La entrada no hace nada.** Reenvía `love.keypressed` y `love.keyreleased` al
-  motor, y confirma que el nombre de la acción coincide con
-  `game/inputMaps.lua`.
+- **La entrada no hace nada.** Confirma que el nombre de la acción coincide con
+  `game/inputMaps.lua`. El motor instala los callbacks de entrada de LÖVE durante
+  `Engine:load()`; no reenvíes `love.keypressed` ni los demás callbacks de entrada.
 - **Se espera una transición inmediata.** Las transiciones solicitadas durante una actualización se difieren hasta el final de la actualización del gestor de escenas; no esperes que la pila cambie a mitad de `update`.
 - **Los recursos permanecen cargados.** Libera cada consumidor en `onDestroy` con
   `resourceManager:releaseAll(self)`.

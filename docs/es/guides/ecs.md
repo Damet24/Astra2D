@@ -2,7 +2,7 @@
 
 ## Prerrequisitos
 
-Empieza con [Tu primer proyecto](/es/getting-started/first-project) y LÖVE, incluidas las acciones de entrada `move_left` y `move_right` y el reenvío de los callbacks de teclado. Este ejemplo cabe en su viewport lógico de `320 × 180`. La escena es dueña de `World`; ni el motor ni el gestor de escenas lo crean o actualizan automáticamente.
+Empieza con [Tu primer proyecto](/es/getting-started/first-project) y LÖVE, incluidas las acciones de entrada `move_left` y `move_right`. Este ejemplo cabe en su viewport lógico de `320 × 180`. La escena es dueña de `World`; ni el motor ni el gestor de escenas lo crean o actualizan automáticamente.
 
 ## 1. Crear una escena con una entidad y un sistema
 

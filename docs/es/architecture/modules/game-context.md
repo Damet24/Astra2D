@@ -4,7 +4,7 @@
 
 ## Responsabilidades y relaciones
 
-[Engine](engine.md) crea el contexto con los gestores de recursos y audio. Después construye el [SceneLoader](scene-loader.md) con ese contexto, construye el [SceneManager](scene-manager.md) y añade al contexto los gestores de escenas y entrada. Durante `Engine:load()` añade el viewport antes de construir la primera escena. El loader pasa la **misma referencia de contexto** a cada constructor de escena de ese motor. Así no es necesario entregar el motor a una escena ni que esta cree servicios compartidos.
+[Engine](engine.md) crea el contexto con los gestores de recursos y audio. Después construye el [SceneLoader](scene-loader.md) con ese contexto, construye el [SceneManager](scene-manager.md) y añade al contexto los gestores de escenas, eventos y entrada. Durante `Engine:load()` añade el viewport antes de construir la primera escena. El loader pasa la **misma referencia de contexto** a cada constructor de escena de ese motor. Así no es necesario entregar el motor a una escena ni que esta cree servicios compartidos.
 
 ## Construcción pública y campos
 
@@ -16,9 +16,10 @@
 | [`audioManager`](audio-manager.md) | Obligatorio en la construcción | Reproducir y controlar audio compartido. |
 | `sceneManager` | Opcional en la construcción; asignado por `Engine.new` | Solicitar transiciones diferidas. |
 | [`inputManager`](input-manager.md) | Añadido por `Engine.new`, no por `GameContext.new` | Consultar acciones configuradas. |
+| [`events`](/es/api/events) | Añadido por `Engine.new`, no por `GameContext.new` | Suscribirse a eventos encolados del motor, incluidas las conexiones de mando. |
 | [`viewport`](rendering.md) | Añadido por `Engine:load()` | Acceder al viewport lógico de Shove y sus conversiones. |
 
-Un contexto construido manualmente no recibe automáticamente `inputManager` ni `viewport`, aunque esas claves se pasen en `services`. Su propietario debe asignarlos. Como el objeto es compartido y mutable, los cambios son visibles para otras escenas; añadir o reemplazar servicios es una decisión arquitectónica, no una invitación a usarlo como localizador global de servicios.
+Un contexto construido manualmente no recibe automáticamente `inputManager`, `events` ni `viewport`, aunque esas claves se pasen en `services`. Su propietario debe asignarlos. Como el objeto es compartido y mutable, los cambios son visibles para otras escenas; añadir o reemplazar servicios es una decisión arquitectónica, no una invitación a usarlo como localizador global de servicios.
 
 ## Ejemplo: acceso desde una escena
 

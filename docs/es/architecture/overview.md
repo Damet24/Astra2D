@@ -65,29 +65,32 @@ Dos ideas facilitan seguir el resto de la arquitectura:
 
 ## El ciclo de vida de un frame
 
-Astra 2D no reemplaza el bucle principal de LÖVE. `main.lua` reenvía los
-callbacks que necesita, y cada uno se corresponde con un método del motor:
+Astra 2D no reemplaza el bucle principal de LÖVE. `main.lua` reenvía los callbacks de ciclo de vida, y cada uno se corresponde con un método del motor:
 
 | Callback de LÖVE | Método del motor | Qué ocurre |
 | --- | --- | --- |
-| `love.load` | `Engine:load()` | Aplica la configuración de la ventana y el color de fondo, crea el viewport, apila `initialScene` y procesa la transición pendiente. |
-| `love.update(dt)` | `Engine:update(dt)` | Actualiza la pila de escenas, luego el audio y por último limpia el estado de entrada. |
+| `love.load` | `Engine:load()` | Aplica la configuración de la ventana y el color de fondo, crea el viewport, apila `initialScene`, procesa la transición pendiente e instala los callbacks de entrada. |
+| `love.update(dt)` | `Engine:update(dt)` | Despacha eventos, actualiza los flancos de los ejes del mando, actualiza la pila de escenas, luego el audio y por último limpia el estado transitorio de entrada y el delta del ratón. |
 | `love.draw` | `Engine:draw()` | Dibuja la pila de escenas dentro del viewport de resolución virtual. |
-| `love.keypressed(key)` | `Engine:keypressed(key)` | Reenvía la tecla al gestor de entrada. |
-| `love.keyreleased(key)` | `Engine:keyreleased(key)` | Reenvía la tecla al gestor de entrada. |
 | `love.quit` | `Engine:quit()` | Destruye la pila de escenas, detiene el audio y libera todos los recursos. |
+
+Durante `Engine:load()`, el motor también instala sus propios manejadores para `keypressed`, `keyreleased`, `mousepressed`, `mousereleased`, `mousemoved`, `gamepadpressed`, `gamepadreleased`, `gamepadaxis`, `joystickadded` y `joystickremoved`. Los juegos no reenvían esos eventos; cada manejador llama al método correspondiente del motor, que actualiza el `InputManager`.
 
 El orden dentro de `Engine:update` es importante:
 
-1. `SceneManager:update(dt)` actualiza las escenas activas y, al final, procesa
+1. `EventManager:dispatch()` entrega los eventos encolados, incluidas las conexiones de mando.
+2. `InputManager:update()` recalcula el estado de los ejes del mando y sus flancos de pulsación y liberación.
+3. `SceneManager:update(dt)` actualiza las escenas activas y, al final, procesa
    las transiciones solicitadas durante el frame.
-2. `AudioManager:update(dt)` libera los sonidos que terminaron de reproducirse.
-3. `InputManager:update()` limpia el estado de "recién pulsado" y "recién
-   soltado", para que las escenas puedan leerlo durante su propia actualización.
+4. `AudioManager:update(dt)` libera los sonidos que terminaron de reproducirse.
+5. `InputManager:reset()` limpia el estado de "recién pulsado" y "recién
+   soltado" y el delta del ratón después de que las escenas los hayan leído.
 
 La entrada se limpia al final a propósito: una escena lee `isJustPressed` mientras
 se ejecuta, y el flag se descarta después de que las escenas seleccionadas hayan
-tenido la oportunidad de reaccionar.
+tenido la oportunidad de reaccionar. Los ejes del mando ya están resueltos antes
+de actualizar las escenas, así que una asignación por eje informa de sus flancos
+en el mismo frame.
 
 Al cerrar, `Engine:quit()` encola el vaciado de la pila de escenas y procesa las
 operaciones pendientes. Las operaciones que ya estaban en la cola se ejecutan
@@ -146,7 +149,7 @@ mecanismos.
 | `initialScene` | La primera escena apilada en la pila. |
 | `scenesPath` | El prefijo de módulo usado para cargar escenas (por defecto `game.scenes`). |
 | `resourceDefinitions` / `resourceLoaders` | Las definiciones y los cargadores usados por el `ResourceManager`. |
-| `inputMaps` | La tabla de acciones usada por el `InputManager`. |
+| `inputMaps` | La tabla de acciones usada por el `InputManager`, incluidas las asignaciones de teclado, ratón y mando. |
 | `window` / `rendering` / `audio` | Modo de ventana, resolución lógica, fondo y volúmenes. |
 | Módulos de escena | Instancias creadas por el `SceneLoader` y dirigidas por el `SceneManager`. |
 | Mundos, sistemas, cámaras, pipelines | Creados por las escenas cuando los necesitan, normalmente en `onLoad`. |

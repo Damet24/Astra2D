@@ -23,7 +23,7 @@ La documentación y el código deben proceder de la misma revisión: el último 
 
 En Windows también puedes arrastrar la carpeta del proyecto sobre el ejecutable de LÖVE. Si `love` no está en tu `PATH`, ejecuta el programa instalado con el directorio del proyecto como argumento.
 
-El `main.lua` actual comienza directamente en `levels.level01`, no en el menú principal. Las teclas de `game/inputMaps.lua` incluyen flecha izquierda o `A` para ir a la izquierda, flecha derecha o `E` para ir a la derecha, `Space` para saltar y `Escape` para pausar. `Return` es la acción de aceptar del menú.
+El `main.lua` actual comienza directamente en `levels.level01`, no en el menú principal. Las asignaciones de `game/inputMaps.lua` usan las flechas izquierda y derecha (o la cruceta y el stick izquierdo) para moverse, `Space` o el botón `A` del mando para saltar, y `Escape` o el botón `Start` para pausar. `Return`, `Space`, el clic izquierdo o el botón `A` aceptan las entradas del menú.
 
 ## Usar el motor en otro proyecto
 
@@ -45,7 +45,7 @@ La guía proporciona todos los archivos necesarios para esta estructura. Un arch
 
 ## Configuración del motor
 
-`Engine.new(config)` construye los servicios; no carga la escena. Los campos obligatorios son `initialScene`, una cadena no vacía, e `inputMaps`, una tabla de acciones (puede ser `{}`). Los demás campos son opcionales:
+`Engine.new(config)` construye los servicios; no carga la escena. Los campos obligatorios son `initialScene`, una cadena no vacía, e `inputMaps`, una tabla de acciones (puede ser `{}`; el motor la reenvía sin validar la forma de las acciones). Los demás campos son opcionales:
 
 | Campo | Valores por defecto y comportamiento |
 | --- | --- |
@@ -58,7 +58,7 @@ La guía proporciona todos los archivos necesarios para esta estructura. Un arch
 
 `backgroundColor` es un array contiguo RGB o RGBA con componentes entre `0` y `1`; el alfa omitido es `1`. `pixelPerfect = true` usa escalado entero y filtrado nearest; una ventana menor que la resolución lógica puede quedar recortada. Consulta la [arquitectura de Engine](/es/architecture/modules/engine) para más detalles de validación y ciclo de vida.
 
-Con el `scenesPath` predeterminado, `initialScene = "hello"` carga `game/scenes/hello.lua`; `levels.level01` carga `game/scenes/levels/level01.lua`. El módulo debe devolver una tabla con una función `new(context)` que devuelva una escena con los métodos de ciclo de vida utilizados por `SceneManager`. [Tu primer proyecto](/es/getting-started/first-project) incluye un ejemplo completo y reenvía los callbacks de LÖVE.
+Con el `scenesPath` predeterminado, `initialScene = "hello"` carga `game/scenes/hello.lua`; `levels.level01` carga `game/scenes/levels/level01.lua`. El módulo debe devolver una tabla con una función `new(context)` que devuelva una escena con los métodos de ciclo de vida utilizados por `SceneManager`. [Tu primer proyecto](/es/getting-started/first-project) incluye un ejemplo completo; el motor instala los callbacks de entrada de LÖVE cuando el juego llama a `Engine:load()`.
 
 ## Empaquetar el juego
 
@@ -83,7 +83,7 @@ El código propio de Astra 2D se distribuye bajo la licencia MIT incluida en el 
 ## Solución de problemas
 
 - **`module 'engine.engine' not found`:** pasa a LÖVE el directorio o archivo `.love` que contiene tanto `main.lua` como `engine/`; conserva `engine/lib/`.
-- **`inputMaps must be a table`:** proporciona una tabla de mapas de entrada, aunque esté vacía. Cada acción con nombre debe tener un array no vacío y contiguo de cadenas de teclas únicas.
+- **Fallan las consultas de entrada:** pasa `inputMaps` a `Engine.new`, aunque sea `{}`. El motor reenvía la tabla sin validarla; cada acción es una tabla con secciones opcionales `keys`, `mouse` y `gamepad`, y los nombres de acción desconocidos devuelven `false`.
 - **`Failed to load scene '...'`:** revisa el prefijo `scenesPath`, el identificador de escena, el nombre y las mayúsculas exactas del archivo y que su módulo devuelva una tabla con `new`. El error también puede contener un fallo dentro del módulo de escena.
 - **Falla la creación de la ventana:** revisa el modo solicitado y el entorno gráfico. Los sistemas sin pantalla necesitan un backend gráfico offscreen adecuado; no disponen de una ventana normal.
 

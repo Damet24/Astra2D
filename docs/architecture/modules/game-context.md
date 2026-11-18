@@ -4,7 +4,7 @@
 
 ## Responsibilities and relationships
 
-[Engine](engine.md) creates the context with the resource and audio managers. It then constructs the [SceneLoader](scene-loader.md) with that context, constructs the [SceneManager](scene-manager.md), and adds the scene and input managers to the context. During `Engine:load()`, it adds the viewport before the first scene is constructed. The loader passes the **same context reference** to every scene constructor for that engine. This avoids requiring a scene to receive the engine or create shared services itself.
+[Engine](engine.md) creates the context with the resource and audio managers. It then constructs the [SceneLoader](scene-loader.md) with that context, constructs the [SceneManager](scene-manager.md), and adds the scene, event, and input managers to the context. During `Engine:load()`, it adds the viewport before the first scene is constructed. The loader passes the **same context reference** to every scene constructor for that engine. This avoids requiring a scene to receive the engine or create shared services itself.
 
 ## Public construction and fields
 
@@ -16,9 +16,10 @@
 | [`audioManager`](audio-manager.md) | Required at construction | Play and control shared audio. |
 | `sceneManager` | Optional at construction; assigned by `Engine.new` | Request deferred transitions. |
 | [`inputManager`](input-manager.md) | Added by `Engine.new`, not by `GameContext.new` | Query mapped actions. |
+| [`events`](/api/events) | Added by `Engine.new`, not by `GameContext.new` | Subscribe to queued engine events, including gamepad connections. |
 | [`viewport`](rendering.md) | Added by `Engine:load()` | Access Shove's logical viewport and conversions. |
 
-A manually constructed context does not automatically gain `inputManager` or `viewport`, even if those keys are passed in `services`. They must be assigned by its owner. Since the object is shared and mutable, changes are visible to other scenes; treat adding or replacing services as an architectural decision rather than using it as a global service locator.
+A manually constructed context does not automatically gain `inputManager`, `events`, or `viewport`, even if those keys are passed in `services`. They must be assigned by its owner. Since the object is shared and mutable, changes are visible to other scenes; treat adding or replacing services as an architectural decision rather than using it as a global service locator.
 
 ## Example: scene access
 

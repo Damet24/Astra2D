@@ -20,7 +20,7 @@ The folder must be named `engine`, because the engine modules import each other 
 
 ## 1. Configure the entry point
 
-Create `main.lua`. It builds the engine once, then forwards the LÖVE callbacks:
+Create `main.lua`. It builds the engine once and forwards the lifecycle callbacks. `Engine:load()` installs the input callbacks itself, so `main.lua` does not forward keyboard, mouse, gamepad, or joystick events:
 
 ```lua
 local Engine = require("engine.engine")
@@ -61,14 +61,6 @@ function love.draw()
     engine:draw()
 end
 
-function love.keypressed(key)
-    engine:keypressed(key)
-end
-
-function love.keyreleased(key)
-    engine:keyreleased(key)
-end
-
 function love.quit()
     engine:quit()
 end
@@ -78,19 +70,24 @@ The required `initialScene` and `inputMaps` are supplied here; `scenesPath` defa
 
 ## 2. Define input actions
 
-Create `game/inputMaps.lua`. Actions are named arrays of LÖVE key names:
+Create `game/inputMaps.lua`. Each action is a table with optional `keys`, `mouse`, and `gamepad` sections:
 
 ```lua
 return {
-    move_left = { "left", "a" },
-    move_right = { "right", "d" },
-    move_up = { "up", "w" },
-    move_down = { "down", "s" },
+    move_left = {
+        keys = { "left", "a" },
+        gamepad = { "dpleft", axes = { leftx = -1 } },
+    },
+    move_right = {
+        keys = { "right", "d" },
+        gamepad = { "dpright", axes = { leftx = 1 } },
+    },
+    move_up = { keys = { "up", "w" } },
+    move_down = { keys = { "down", "s" } },
 }
 ```
 
-Each action must have at least one binding, indices must be contiguous, and the
-same action cannot list the same key twice.
+Each section lists LÖVE binding names or, for `mouse`, button numbers; the optional `gamepad.axes` table maps an axis name to `-1` or `1`. Actions do not need every section, and the engine does not validate the names: unknown actions return `false` and typos never match. See the [input guide](/guides/input) for mouse, gamepad, and edge behavior.
 
 ## 3. Create the first scene
 
@@ -178,10 +175,12 @@ When LÖVE calls `love.load`, `Engine:load()`:
 2. Creates the virtual-resolution viewport.
 3. Pushes `initialScene` onto the scene stack.
 4. Calls the scene's `onLoad` and `onEnter` callbacks.
+5. Installs the LÖVE keyboard, mouse, gamepad, and joystick callbacks.
 
-On every frame, `Engine:update()` updates the scene, then audio, then input.
-`InputManager:isDown(action)` checks the keys bound to that action. At the end of
-the update, the manager clears its "just pressed" and "just released" state.
+On every frame, `Engine:update()` dispatches queued events, recomputes gamepad
+axis edges, updates the scene, updates audio, and finally clears the transient
+input edges and mouse delta. `InputManager:isDown(action)` checks every binding
+of that action, whether it comes from the keyboard, mouse, or gamepad.
 
 `Engine:draw()` draws the scene stack through the viewport, which scales the
 logical resolution to the window.
@@ -204,8 +203,9 @@ manager update, after the current scene has finished updating.
 - **The scene is not found.** Check the `initialScene` identifier and the
   `scenesPath` prefix. Dots map to folder separators.
 
-- **Input does nothing.** Forward `love.keypressed` and `love.keyreleased` to the
-  engine, and confirm the action name matches `game/inputMaps.lua`.
+- **Input does nothing.** Confirm the action name matches `game/inputMaps.lua`.
+  The engine installs the LÖVE input callbacks during `Engine:load()`; do not
+  forward `love.keypressed` or the other input callbacks yourself.
 - **A transition is expected immediately.** Scene transitions requested during an update are deferred until the end of the scene manager update; do not expect the stack to change halfway through `update`.
 - **Resources stay loaded.** Release every consumer in `onDestroy` with
   `resourceManager:releaseAll(self)`.

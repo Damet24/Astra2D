@@ -2,7 +2,7 @@
 
 ## Goal and prerequisites
 
-Start looping music, trigger an effect, and pause or restart the music. Start from [Your First Project](/getting-started/first-project), including its LÖVE callbacks. Supply your own LÖVE-compatible audio files at `game/assets/guide-music.ogg` and `game/assets/guide-effect.wav`; a new project does not include them.
+Start looping music, trigger an effect, and pause or restart the music. Start from [Your First Project](/getting-started/first-project), including its engine setup. Supply your own LÖVE-compatible audio files at `game/assets/guide-music.ogg` and `game/assets/guide-effect.wav`; a new project does not include them.
 
 ## 1. Register sounds and actions
 
@@ -16,9 +16,9 @@ guide_effect = { type = "sound", path = "game/assets/guide-effect.wav", soundTyp
 Add these entries to `game/inputMaps.lua`, keeping any existing entries in both tables:
 
 ```lua
-guide_effect = { "space" },
-guide_music_pause = { "m" },
-guide_music_restart = { "r" },
+guide_effect = { keys = { "space" } },
+guide_music_pause = { keys = { "m" } },
+guide_music_restart = { keys = { "r" } },
 ```
 
 These snippets are table entries. Ensure `Engine.new` receives `resourceDefinitions = require("game.resources.definitions")` and `inputMaps = require("game.inputMaps")`; set `initialScene = "guideAudio"`. The engine defaults all three audio volumes to `1.0`. Optionally replace the existing `audio` table in the engine configuration with `audio = { masterVolume = 1.0, musicVolume = 0.5, sfxVolume = 0.8 }`.

@@ -23,7 +23,7 @@ Documentation and code should come from the same revision: the branch tip can ch
 
 On Windows you can instead drag the project folder onto the LÖVE executable. If `love` is not on your `PATH`, invoke the installed executable with the project directory as its argument.
 
-The current `main.lua` starts directly in `levels.level01`, not the main menu. The bindings in `game/inputMaps.lua` include left arrow or `A` to move left, right arrow or `E` to move right, `Space` to jump, and `Escape` to pause. `Return` is the menu's accept action.
+The current `main.lua` starts directly in `levels.level01`, not the main menu. The bindings in `game/inputMaps.lua` use the left and right arrows (or the d-pad and left stick) to move, `Space` or gamepad `A` to jump, and `Escape` or gamepad `Start` to pause. `Return`, `Space`, a left click, or gamepad `A` accepts menu entries.
 
 ## Use the engine in another project
 
@@ -45,7 +45,7 @@ The guide provides every file needed for this layout. A resource definitions fil
 
 ## Engine configuration
 
-`Engine.new(config)` constructs the services; it does not load the scene. The required fields are `initialScene`, a non-empty string, and `inputMaps`, a table of actions (which can be `{}`). The remaining fields are optional:
+`Engine.new(config)` constructs the services; it does not load the scene. The required fields are `initialScene`, a non-empty string, and `inputMaps`, a table of actions (which can be `{}`; the engine forwards it without validating the action shapes). The remaining fields are optional:
 
 | Field | Default and behavior |
 | --- | --- |
@@ -58,7 +58,7 @@ The guide provides every file needed for this layout. A resource definitions fil
 
 `backgroundColor` is a contiguous RGB or RGBA array with components from `0` to `1`; omitted alpha is `1`. `pixelPerfect = true` uses integer scaling and nearest filtering; a window smaller than the logical resolution can be cropped. See the [Engine architecture](/architecture/modules/engine) for validation and lifecycle details.
 
-With the default `scenesPath`, `initialScene = "hello"` loads `game/scenes/hello.lua`; `levels.level01` loads `game/scenes/levels/level01.lua`. The module must return a table with a `new(context)` function returning a scene with the lifecycle methods used by `SceneManager`. The [first project](/getting-started/first-project) supplies a complete example and forwards LÖVE callbacks.
+With the default `scenesPath`, `initialScene = "hello"` loads `game/scenes/hello.lua`; `levels.level01` loads `game/scenes/levels/level01.lua`. The module must return a table with a `new(context)` function returning a scene with the lifecycle methods used by `SceneManager`. The [first project](/getting-started/first-project) supplies a complete example; the engine installs the LÖVE input callbacks when the game calls `Engine:load()`.
 
 ## Package the game
 
@@ -83,7 +83,7 @@ Astra 2D's own code is distributed under the MIT license in the repository's roo
 ## Troubleshooting
 
 - **`module 'engine.engine' not found`:** pass LÖVE the directory or `.love` archive containing both `main.lua` and `engine/`; preserve `engine/lib/`.
-- **`inputMaps must be a table`:** pass an input map table, even if it is empty. Each named action must have a non-empty, contiguous array of unique key strings.
+- **Input queries fail:** pass `inputMaps` to `Engine.new`, even if it is `{}`. The engine forwards the table without validating it; each action is a table with optional `keys`, `mouse`, and `gamepad` sections, and unknown action names return `false`.
 - **`Failed to load scene '...'`:** check the `scenesPath` prefix, scene identifier, exact filename and capitalization, and that its module returns a table with `new`. The error may also contain an error from inside the scene module.
 - **Window creation fails:** check the requested mode and graphical environment. Headless systems need a suitable offscreen graphics backend; a normal window is not available there.
 

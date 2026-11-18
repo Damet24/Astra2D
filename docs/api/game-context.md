@@ -12,9 +12,10 @@ Module: `require("engine.core.gameContext")`. A mutable service container shared
 | `audioManager` | Required at construction; shared [AudioManager](audio-manager.md). |
 | `sceneManager` | Optional at construction; [Engine](engine.md) assigns it after creating the loader and manager. |
 | `inputManager` | Assigned by `Engine.new`, not by this constructor. |
+| `events` | Assigned by `Engine.new`; shared [EventManager](events.md). |
 | `viewport` | Assigned by `Engine:load()` before the initial scene is constructed. |
 
-The built-in [SceneLoader](scene-loader.md) passes the same context reference to each scene constructor. Manually created contexts do not acquire input or viewport automatically, even if those keys were supplied in `services`. The container neither updates nor releases services.
+The built-in [SceneLoader](scene-loader.md) passes the same context reference to each scene constructor. Manually created contexts do not acquire input, events, or viewport automatically, even if those keys were supplied in `services`. The container neither updates nor releases services.
 
 ## Example
 
