@@ -1,14 +1,39 @@
 -- game/inputMaps.lua
 
 return {
-	accept = { "return" },
-	exit = { "escape" },
-	move_left = { "left", "a" },
-	move_right = { "right", "e" },
-    jump = { "space", "up" },
+    accept = {
+        keys = { "return", "space" },
+        mouse = { 1 },
+        gamepad = { "a" },
+    },
 
-    menu_up = { "up" },
-    menu_down = { "down" },
-    menu_accept = { "return", "space" },
-    menu_back = { "escape" }
+    exit = {
+        keys = { "escape" },
+        gamepad = { "start" },
+    },
+
+    move_left = {
+        keys = { "left" },
+        gamepad = {
+            "dpleft",
+            axes = {
+                leftx = -1,
+            },
+        },
+    },
+
+    move_right = {
+        keys = { "right" },
+        gamepad = {
+            "dpright",
+            axes = {
+                leftx = 1,
+            },
+        },
+    },
+
+    jump = {
+        keys = { "space" },
+        gamepad = { "a" },
+    },
 }
