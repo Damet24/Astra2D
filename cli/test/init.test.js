@@ -41,7 +41,16 @@ test("initProject crea el proyecto en <ruta>/<nombre>", async (t) => {
     path.join(destination, "game", "inputMaps.lua"),
     "utf8",
   );
-  assert.match(inputMaps, /exit = \{ "return" \}/);
+  assert.match(inputMaps, /exit = \{/);
+  assert.match(inputMaps, /keys = \{ "return" \}/);
+  assert.match(inputMaps, /gamepad = \{ "start" \}/);
+
+  const projectMain = fs.readFileSync(
+    path.join(destination, "main.lua"),
+    "utf8",
+  );
+  assert.doesNotMatch(projectMain, /love\.keypressed/);
+  assert.doesNotMatch(projectMain, /love\.keyreleased/);
 
   const mainScene = fs.readFileSync(
     path.join(destination, "game", "scenes", "main.lua"),
@@ -49,7 +58,7 @@ test("initProject crea el proyecto en <ruta>/<nombre>", async (t) => {
   );
   assert.match(mainScene, /self\.elapsed = 0/);
   assert.match(mainScene, /self\.elapsed = self\.elapsed \+ dt/);
-  assert.match(mainScene, /Press enter to exit/);
+  assert.match(mainScene, /Press Enter or gamepad Start to exit/);
 
   assert.match(logs.join("\n"), /Proyecto creado en/);
 });

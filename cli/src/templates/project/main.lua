@@ -28,6 +28,7 @@ local engine = Engine.new({
 	},
 })
 
+-- Engine:load() instala los callbacks de entrada de LÖVE; no los reenvíes aquí.
 function love.load()
 	engine:load()
 end
@@ -38,14 +39,6 @@ end
 
 function love.draw()
 	engine:draw()
-end
-
-function love.keypressed(key)
-	engine:keypressed(key)
-end
-
-function love.keyreleased(key)
-	engine:keyreleased(key)
 end
 
 function love.quit()

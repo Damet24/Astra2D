@@ -20,7 +20,7 @@ end
 
 function Main:draw()
     love.graphics.print(string.format("Time: %.1f", self.elapsed), 16, 16)
-    love.graphics.print("Press enter to exit", 16, 29)
+    love.graphics.print("Press Enter or gamepad Start to exit", 16, 29)
 end
 
 return Main
