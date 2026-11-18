@@ -9,7 +9,7 @@ El repositorio incluye el código del motor en `engine/`, un juego de prueba en 
 - **Escenas:** pila de escenas, transiciones diferidas y callbacks de ciclo de vida.
 - **Entidades y sistemas (ECS):** componentes, consultas, sistemas ordenados y eventos.
 - **Recursos:** carga, reutilización y liberación de imágenes, sonidos y fuentes por consumidor.
-- **Entrada:** acciones configurables para consultar teclas mantenidas, pulsadas o soltadas.
+- **Entrada:** acciones configurables con teclado, ratón y mando (botones y ejes), con consultas de estado mantenido, pulsado y soltado.
 - **Audio:** reproducción de música y efectos mediante un gestor compartido.
 - **Cámaras y renderizado:** vistas de mundo, resolución lógica, escalado y dibujo por capas.
 - **Física:** integración con `love.physics` mediante cuerpos, colisionadores rectangulares y sistemas ECS.

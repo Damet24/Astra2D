@@ -3,7 +3,7 @@ name: Deploy VitePress Documentation
 
 on:
   push:
-    tag:
+    tags:
       - 'v*'
 
   workflow_dispatch:
