@@ -1,6 +1,6 @@
 {
   "name": "astra2d-cli",
-  "version": "1.0.1",
+  "version": "1.0.4",
   "description": "CLI oficial para el motor Astra2D.",
   "main": "bin/astra2d.js",
   "type": "module",
