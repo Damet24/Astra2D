@@ -1,30 +1,30 @@
 # Changelog
 
-Todas las versiones notables de Astra 2D se documentan en este archivo.
+All notable versions of Astra 2D are documented in this file.
 
 ## [0.2.0] - 2026-11-18
 
-### Añadido
+### Added
 
-- Entrada de ratón: botones con estado mantenido, pulsado y soltado, posición y delta por frame (`getMousePosition`, `getMouseDelta`, `isMouseDown`, `isMouseJustPressed`, `isMouseJustReleased`).
-- Entrada de mando: botones y ejes con umbral de `0.5`; se sigue el primer mando conectado.
-- Eventos `gamepad_connected` y `gamepad_disconnected` con `{ joystick, name }`.
-- `context.events` expone el `EventManager` del motor.
-- CLI `astra2d` con los comandos `init` y `scene:create`, y copia del motor empaquetada como respaldo sin conexión.
+- Mouse input: buttons with held, pressed, and released state, plus position and per-frame delta (`getMousePosition`, `getMouseDelta`, `isMouseDown`, `isMouseJustPressed`, `isMouseJustReleased`).
+- Gamepad input: buttons and axes with a `0.5` threshold; only the first connected gamepad is tracked.
+- `gamepad_connected` and `gamepad_disconnected` events with `{ joystick, name }`.
+- `context.events` exposes the engine's `EventManager`.
+- `astra2d` CLI with the `init` and `scene:create` commands, and a bundled engine copy as an offline fallback.
 
-### Cambiado
+### Changed
 
-- **Breaking:** los mapas de entrada ahora son tablas por dispositivo (`keys`, `mouse`, `gamepad` y `gamepad.axes`) en lugar de arrays planos de teclas.
-- `InputManager.new(inputMaps, events)` recibe el gestor de eventos y ya no valida los mapas; las acciones desconocidas devuelven `false`.
-- `Engine:load()` instala los callbacks de entrada de LÖVE; `main.lua` solo reenvía `load`, `update`, `draw` y `quit`.
-- Orden de `Engine:update`: despacho de eventos, flancos de ejes, escenas, audio y limpieza final de entrada.
-- La plantilla de proyecto del CLI y `examples/collect` usan el nuevo formato de entrada.
-- Documentación en inglés y español actualizada para el nuevo sistema.
+- **Breaking:** input maps are now per-device tables (`keys`, `mouse`, `gamepad`, and `gamepad.axes`) instead of flat key arrays.
+- `InputManager.new(inputMaps, events)` takes the event manager and no longer validates maps; unknown actions return `false`.
+- `Engine:load()` installs the LÖVE input callbacks; `main.lua` only forwards `load`, `update`, `draw`, and `quit`.
+- `Engine:update` order: event dispatch, axis edges, scenes, audio, and final input cleanup.
+- The CLI project template and `examples/collect` use the new input format.
+- English and Spanish documentation updated for the new input system.
 
-### Corregido
+### Fixed
 
-- El despliegue de la documentación con etiquetas de versión (`on.push.tags`).
+- Documentation deployment on version tags (`on.push.tags`).
 
-### Eliminado
+### Removed
 
-- Reenvío manual de `love.keypressed` y `love.keyreleased` en plantillas, ejemplos y documentación.
+- Manual forwarding of `love.keypressed` and `love.keyreleased` in templates, examples, and documentation.

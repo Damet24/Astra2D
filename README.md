@@ -1,55 +1,55 @@
 # Astra 2D
 
-Astra 2D es un motor modular para crear juegos 2D con Lua y [LÖVE](https://love2d.org/). Proporciona herramientas para organizar escenas, entidades, recursos y renderizado, mientras que las reglas y el contenido de cada juego se definen en sus propias escenas y sistemas.
+Astra 2D is a modular engine for building 2D games with Lua and [LÖVE](https://love2d.org/). It provides tools to organize scenes, entities, resources, and rendering, while each game defines its own rules and content in its scenes and systems.
 
-El repositorio incluye el código del motor en `engine/`, un juego de prueba en `game/` y un ejemplo independiente en `examples/collect/`.
+The repository includes the engine source in `engine/`, a demo game in `game/`, and a standalone example in `examples/collect/`.
 
-## Características
+## Features
 
-- **Escenas:** pila de escenas, transiciones diferidas y callbacks de ciclo de vida.
-- **Entidades y sistemas (ECS):** componentes, consultas, sistemas ordenados y eventos.
-- **Recursos:** carga, reutilización y liberación de imágenes, sonidos y fuentes por consumidor.
-- **Entrada:** acciones configurables con teclado, ratón y mando (botones y ejes), con consultas de estado mantenido, pulsado y soltado.
-- **Audio:** reproducción de música y efectos mediante un gestor compartido.
-- **Cámaras y renderizado:** vistas de mundo, resolución lógica, escalado y dibujo por capas.
-- **Física:** integración con `love.physics` mediante cuerpos, colisionadores rectangulares y sistemas ECS.
-- **Mapas de Tiled:** renderizado de capas de tiles exportadas a Lua; las colisiones se crean por separado.
+- **Scenes:** scene stack, deferred transitions, and lifecycle callbacks.
+- **Entities and systems (ECS):** components, queries, ordered systems, and events.
+- **Resources:** loading, reuse, and per-consumer release of images, sounds, and fonts.
+- **Input:** configurable actions for the keyboard, mouse, and gamepad (buttons and axes), with held, pressed, and released state queries.
+- **Audio:** music and sound-effect playback through a shared manager.
+- **Cameras and rendering:** world views, logical resolution, scaling, and layered drawing.
+- **Physics:** `love.physics` integration through bodies, rectangular colliders, and ECS systems.
+- **Tiled maps:** rendering of tile layers exported to Lua; collisions are created separately.
 
-## Requisitos
+## Requirements
 
-- [LÖVE 11.5](https://love2d.org/), la versión utilizada en la documentación y las pruebas del proyecto. Otras versiones no han sido verificadas.
-- El código fuente del repositorio, incluido `engine/lib/` y, para ejecutar el juego de prueba, el directorio `game/` con sus recursos.
-- Para editar mapas, [Tiled](https://www.mapeditor.org/) es opcional. Para desarrollar o compilar el sitio de documentación, se necesitan Node.js y npm; no son necesarios para ejecutar el juego.
+- [LÖVE 11.5](https://love2d.org/), the version used in the project's documentation and tests. Other versions have not been verified.
+- The repository source, including `engine/lib/` and, to run the demo game, the `game/` directory with its assets.
+- [Tiled](https://www.mapeditor.org/) is optional for editing maps. Node.js and npm are required to develop or build the documentation site; they are not needed to run the game.
 
-LÖVE incluye el entorno Lua; no es necesario instalar Lua por separado para ejecutar los ejemplos.
+LÖVE bundles the Lua runtime, so no separate Lua installation is needed to run the examples.
 
-## Ejecutar el juego de prueba
+## Run the demo game
 
-Desde la raíz de una copia del repositorio:
+From the root of a repository checkout:
 
 ```sh
 love .
 ```
 
-Si `love` no está en el `PATH`, ejecuta el programa de LÖVE instalado y pásale la ruta de la carpeta del repositorio. El `main.lua` actual inicia `levels.level01`.
+If `love` is not on your `PATH`, run the installed LÖVE executable and pass it the repository folder. The current `main.lua` starts in `levels.level01`.
 
-Controles del juego de prueba: flecha izquierda o **A** para moverse a la izquierda; flecha derecha o **E** para moverse a la derecha; **espacio** para saltar y **Esc** para pausar. Para ejecutar el ejemplo independiente Collect, consulta sus [instrucciones](docs/es/examples/index.md).
+Demo controls: the left and right arrows (or the d-pad and left stick) move, **Space** or gamepad **A** jumps, and **Esc** or gamepad **Start** pauses. To run the standalone Collect example, see its [instructions](docs/examples/index.md).
 
-Para usar el motor en otro proyecto LÖVE, copia `engine/` completo, incluido `engine/lib/`, dentro del directorio fuente del juego junto a su `main.lua`. La guía [Tu primer proyecto](docs/es/getting-started/first-project.md) muestra una configuración y una escena completas.
+To use the engine in another LÖVE project, copy the complete `engine/` directory, including `engine/lib/`, into the game source directory next to its `main.lua`. The [Your First Project](docs/getting-started/first-project.md) guide shows a complete setup and scene.
 
-## Documentación
+## Documentation
 
-La documentación completa está publicada en [GitHub Pages](https://damet24.github.io/Astra2D/); también puedes leerla directamente en [español](https://damet24.github.io/Astra2D/es/). Las fuentes del sitio están en `docs/`.
+The full documentation is published on [GitHub Pages](https://damet24.github.io/Astra2D/); it is also available in [Spanish](https://damet24.github.io/Astra2D/es/). The site sources live in `docs/`.
 
-- [Instalación](docs/es/getting-started/installation.md)
-- [Tu primer proyecto](docs/es/getting-started/first-project.md)
-- [Arquitectura](docs/es/architecture/overview.md)
-- [Guías](docs/es/guides/index.md)
-- [Referencia de API](docs/es/api/index.md)
-- [Ejemplos](docs/es/examples/index.md)
+- [Installation](docs/getting-started/installation.md)
+- [Your First Project](docs/getting-started/first-project.md)
+- [Architecture](docs/architecture/overview.md)
+- [Guides](docs/guides/index.md)
+- [API reference](docs/api/index.md)
+- [Examples](docs/examples/index.md)
 
-## Licencias y créditos
+## Licenses and credits
 
-El código propio de Astra 2D está disponible bajo la [licencia MIT](LICENSE).
+Astra 2D's own code is released under the [MIT license](LICENSE).
 
-La cámara utiliza [HUMP](https://github.com/vrld/hump), de Matthias Richter, mediante un adaptador; su aviso de derechos y licencia está en `engine/lib/hump/camera.lua`. El viewport utiliza Shove, cuya licencia está en `engine/lib/shove/LICENSE`. Las bibliotecas y los recursos de terceros pueden tener sus propios términos: consérvalos y verifica los permisos de los assets antes de redistribuirlos.
+The camera uses [HUMP](https://github.com/vrld/hump) by Matthias Richter through an adapter; its copyright and license notice is in `engine/lib/hump/camera.lua`. The viewport uses Shove, whose license is in `engine/lib/shove/LICENSE`. Third-party libraries and assets may have their own terms: keep their notices and verify asset permissions before redistributing them.
