@@ -12,7 +12,7 @@ const TEMPLATE_SOURCE = path.join(
   "scene",
   "scene.lua",
 );
-const DEFAULT_SCENES_DIR = path.join("games", "scenes");
+const DEFAULT_SCENES_DIR = path.join("game", "scenes");
 const SCENE_NAME_PATTERN = /^[A-Za-z_][A-Za-z0-9_]*$/;
 const PLACEHOLDER = "{{sceneName}}";
 
@@ -30,7 +30,7 @@ Argumentos:
 
 Ejemplos:
   astra2d scene:create MyScene
-  astra2d scene:create MyScene games/scenes
+  astra2d scene:create MyScene game/scenes
   astra2d s:c MyScene tests/scenes`;
 
 function assertTemplate() {
