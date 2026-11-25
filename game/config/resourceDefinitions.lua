@@ -1,68 +1,34 @@
+local ResourceUtils = require("engine.resources.utils")
+
+local IMAGES_ROOT = "game/assets/images/"
+
 local definitions = {
-	terrain = {
-		type = "image",
-		path = "game/assets/images/Terrain/Terrain (16x16).png",
-	},
-	player_idle = {
-		type = "image",
-		path = "game/assets/images/Main Characters/Pink Man/Idle (32x32).png",
-	},
-	player_run = {
-		type = "image",
-		path = "game/assets/images/Main Characters/Pink Man/Run (32x32).png",
-	},
-	player_jump = {
-		type = "image",
-		path = "game/assets/images/Main Characters/Pink Man/Jump (32x32).png",
-	},
-	player_double_jump = {
-		type = "image",
-		path = "game/assets/images/Main Characters/Pink Man/Double Jump (32x32).png",
-	},
-	player_fall = {
-		type = "image",
-		path = "game/assets/images/Main Characters/Pink Man/Fall (32x32).png",
-	},
-	player_wall_jump = {
-		type = "image",
-		path = "game/assets/images/Main Characters/Pink Man/Wall Jump (32x32).png",
-	},
-	player_hit = {
-		type = "image",
-		path = "game/assets/images/Main Characters/Pink Man/Hit (32x32).png",
-	},
 	pause_font = {
 		type = "font",
 		size = 18,
 	},
-
-    music = {
-        type = "sound",
-        soundType = "stream",
-        path = "game/assets/music/time_for_adventure.mp3"
-	}
 }
 
-local function addImages(directory, images)
-    for id, filename in pairs(images) do
-        assert(not definitions[id], "duplicate resource id: " .. id)
-        definitions[id] = { type = "image", path = "game/assets/images/" .. directory .. filename }
-    end
-end
+ResourceUtils.addImages(definitions, IMAGES_ROOT, "Terrain/", {
+	terrain = "Terrain (16x16).png",
+})
 
-local function addSound(directory, sound, soundType)
-    for id, filename in pairs(sound) do
-        assert(not definitions[id], "duplicate resource id: " .. id)
-        definitions[id] = { type = "sound", path = "game/assets/sounds/" .. directory .. filename, soundType = soundType }
-    end
-end
+ResourceUtils.addImages(definitions, IMAGES_ROOT, "Main Characters/Pink Man/", {
+	player_idle = "Idle (32x32).png",
+	player_run = "Run (32x32).png",
+	player_jump = "Jump (32x32).png",
+	player_double_jump = "Double Jump (32x32).png",
+	player_fall = "Fall (32x32).png",
+	player_wall_jump = "Wall Jump (32x32).png",
+	player_hit = "Hit (32x32).png",
+})
 
-addImages("", {
+ResourceUtils.addImages(definitions, IMAGES_ROOT, "", {
 	enemies_preview = "20 Enemies.png",
 	hello = "Hello.png",
 })
 
-addImages("Background/", {
+ResourceUtils.addImages(definitions, IMAGES_ROOT, "Background/", {
 	background_brown = "Brown.png",
 	background_gray = "Gray.png",
 	background_green = "Green.png",
@@ -73,13 +39,13 @@ addImages("Background/", {
 
 })
 
-addImages("Items/Boxes/", {
+ResourceUtils.addImages(definitions, IMAGES_ROOT, "Items/Boxes/", {
 	box1_break = "Box1/Break.png", box1_hit = "Box1/Hit (28x24).png", box1_idle = "Box1/Idle.png",
 	box2_break = "Box2/Break.png", box2_hit = "Box2/Hit (28x24).png", box2_idle = "Box2/Idle.png",
 	box3_break = "Box3/Break.png", box3_hit = "Box3/Hit (28x24).png", box3_idle = "Box3/Idle.png",
 })
 
-addImages("Items/Checkpoints/", {
+ResourceUtils.addImages(definitions, IMAGES_ROOT, "Items/Checkpoints/", {
 	checkpoint_flag_idle = "Checkpoint/Checkpoint (Flag Idle)(64x64).png",
 	checkpoint_flag_out = "Checkpoint/Checkpoint (Flag Out) (64x64).png",
 	checkpoint_no_flag = "Checkpoint/Checkpoint (No Flag).png",
@@ -89,39 +55,39 @@ addImages("Items/Checkpoints/", {
 	checkpoint_start_moving = "Start/Start (Moving) (64x64).png",
 })
 
-addImages("Items/Fruits/", {
+ResourceUtils.addImages(definitions, IMAGES_ROOT, "Items/Fruits/", {
 	fruit_apple = "Apple.png", fruit_bananas = "Bananas.png", fruit_cherries = "Cherries.png",
 	fruit_collected = "Collected.png", fruit_kiwi = "Kiwi.png", fruit_melon = "Melon.png",
 	fruit_orange = "Orange.png", fruit_pineapple = "Pineapple.png", fruit_strawberry = "Strawberry.png",
 })
 
-addImages("Main Characters/", {
+ResourceUtils.addImages(definitions, IMAGES_ROOT, "Main Characters/", {
 	character_appearing = "Appearing (96x96).png",
 	character_disappearing = "Desappearing (96x96).png",
 })
 
-addImages("Main Characters/Mask Dude/", {
+ResourceUtils.addImages(definitions, IMAGES_ROOT, "Main Characters/Mask Dude/", {
 	mask_dude_idle = "Idle (32x32).png", mask_dude_run = "Run (32x32).png",
 	mask_dude_jump = "Jump (32x32).png", mask_dude_double_jump = "Double Jump (32x32).png",
 	mask_dude_fall = "Fall (32x32).png", mask_dude_wall_jump = "Wall Jump (32x32).png",
 	mask_dude_hit = "Hit (32x32).png",
 })
 
-addImages("Main Characters/Ninja Frog/", {
+ResourceUtils.addImages(definitions, IMAGES_ROOT, "Main Characters/Ninja Frog/", {
 	ninja_frog_idle = "Idle (32x32).png", ninja_frog_run = "Run (32x32).png",
 	ninja_frog_jump = "Jump (32x32).png", ninja_frog_double_jump = "Double Jump (32x32).png",
 	ninja_frog_fall = "Fall (32x32).png", ninja_frog_wall_jump = "Wall Jump (32x32).png",
 	ninja_frog_hit = "Hit (32x32).png",
 })
 
-addImages("Main Characters/Virtual Guy/", {
+ResourceUtils.addImages(definitions, IMAGES_ROOT, "Main Characters/Virtual Guy/", {
 	virtual_guy_idle = "Idle (32x32).png", virtual_guy_run = "Run (32x32).png",
 	virtual_guy_jump = "Jump (32x32).png", virtual_guy_double_jump = "Double Jump (32x32).png",
 	virtual_guy_fall = "Fall (32x32).png", virtual_guy_wall_jump = "Wall Jump (32x32).png",
 	virtual_guy_hit = "Hit (32x32).png",
 })
 
-addImages("Menu/Buttons/", {
+ResourceUtils.addImages(definitions, IMAGES_ROOT, "Menu/Buttons/", {
 	menu_button_achievements = "Achievements.png", menu_button_back = "Back.png",
 	menu_button_close = "Close.png", menu_button_leaderboard = "Leaderboard.png",
 	menu_button_levels = "Levels.png", menu_button_next = "Next.png", menu_button_play = "Play.png",
@@ -131,20 +97,20 @@ addImages("Menu/Buttons/", {
 
 for level = 1, 50 do
 	local number = string.format("%02d", level)
-	addImages("Menu/Levels/", { ["menu_level_" .. number] = number .. ".png" })
+	ResourceUtils.addImages(definitions, IMAGES_ROOT, "Menu/Levels/", { ["menu_level_" .. number] = number .. ".png" })
 end
 
-addImages("Menu/Text/", {
+ResourceUtils.addImages(definitions, IMAGES_ROOT, "Menu/Text/", {
 	menu_text_black = "Text (Black) (8x10).png",
 	menu_text_white = "Text (White) (8x10).png",
 })
 
-addImages("Other/", {
+ResourceUtils.addImages(definitions, IMAGES_ROOT, "Other/", {
 	confetti = "Confetti (16x16).png", dust_particle = "Dust Particle.png",
 	shadow = "Shadow.png", transition = "Transition.png",
 })
 
-addImages("Traps/", {
+ResourceUtils.addImages(definitions, IMAGES_ROOT, "Traps/", {
 	trap_arrow_hit = "Arrow/Hit (18x18).png", trap_arrow_idle = "Arrow/Idle (18x18).png",
 	trap_blocks_hit_side = "Blocks/HitSide (22x22).png", trap_blocks_hit_top = "Blocks/HitTop (22x22).png",
 	trap_blocks_idle = "Blocks/Idle.png", trap_blocks_part_1 = "Blocks/Part 1 (22x22).png",
@@ -170,7 +136,11 @@ addImages("Traps/", {
 	trap_trampoline_jump = "Trampoline/Jump (28x28).png",
 })
 
-addSound("", {
+ResourceUtils.addSound(definitions, "game/assets/music/", "", {
+	music = "time_for_adventure.mp3",
+}, "stream")
+
+ResourceUtils.addSound(definitions, "game/assets/sounds/", "", {
     coin = "coin.wav",
     explosion = "explosion.wav",
     hurt = "hurt.wav",
