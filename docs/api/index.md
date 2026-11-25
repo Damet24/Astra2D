@@ -6,7 +6,7 @@ Technical reference for Astra 2D's public interfaces. Each page lists parameters
 
 - [Engine](./engine) and [GameContext](./game-context)
 - [Scene](./scene), [SceneManager](./scene-manager), and [SceneLoader](./scene-loader)
-- [ResourceManager](./resource-manager), [InputManager](./input-manager), and [AudioManager](./audio-manager)
+- [ResourceManager](./resource-manager), [resource definition utilities](./resources-utils), [InputManager](./input-manager), and [AudioManager](./audio-manager)
 
 ## World and rendering
 

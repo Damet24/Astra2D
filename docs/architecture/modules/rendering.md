@@ -31,7 +31,7 @@ The renderer reads a flat row-major `layer.data`, layer or map width/height, map
 A typical scene with a world and optional camera can submit both types together:
 
 ```lua
-local RenderPipeline = require("engine.graphics.render_pipeline")
+local RenderPipeline = require("engine.graphics.RenderPipeline")
 local RenderSystem = require("engine.ecs.systems.renderSystem")
 -- During setup: self.pipeline = RenderPipeline.new()
 -- self.tilemapRender, self.world, and optionally self.cameraManager are scene-owned.

@@ -1,6 +1,6 @@
 # Renderizado
 
-`require("engine.graphics.render_pipeline")` ordena callbacks de dibujo; `require("engine.ecs.systems.renderSystem")` envía sprites ECS. Ninguno es obligatorio para dibujar una escena. Usan gráficos de LÖVE y deben ejecutarse en el contexto de dibujo apropiado.
+`require("engine.graphics.RenderPipeline")` ordena callbacks de dibujo; `require("engine.ecs.systems.renderSystem")` envía sprites ECS. Ninguno es obligatorio para dibujar una escena. Usan gráficos de LÖVE y deben ejecutarse en el contexto de dibujo apropiado.
 
 ## Pipeline de renderizado
 
@@ -23,7 +23,7 @@ Los datos necesarios para dibujar son `Transform.x/y` y normalmente `Sprite.imag
 ## Ejemplo
 
 ```lua
-local Pipeline = require("engine.graphics.render_pipeline")
+local Pipeline = require("engine.graphics.RenderPipeline")
 local RenderSystem = require("engine.ecs.systems.renderSystem")
 local pipeline = Pipeline.new()
 -- En el dibujo de una escena, con world y tileRenderer creados al iniciar:

@@ -6,7 +6,7 @@ Referencia técnica de las interfaces públicas de Astra 2D. Cada página indica
 
 - [Engine](./engine) y [GameContext](./game-context)
 - [Scene](./scene), [SceneManager](./scene-manager) y [SceneLoader](./scene-loader)
-- [ResourceManager](./resource-manager), [InputManager](./input-manager) y [AudioManager](./audio-manager)
+- [ResourceManager](./resource-manager), [utilidades de recursos](./resources-utils), [InputManager](./input-manager) y [AudioManager](./audio-manager)
 
 ## Mundo y renderizado
 

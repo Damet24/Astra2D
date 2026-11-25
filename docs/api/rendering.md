@@ -1,6 +1,6 @@
 # Rendering
 
-`require("engine.graphics.render_pipeline")` orders draw callbacks; `require("engine.ecs.systems.renderSystem")` submits ECS sprites. Neither is required to draw a scene. They use LÖVE graphics and should run within the appropriate draw context.
+`require("engine.graphics.RenderPipeline")` orders draw callbacks; `require("engine.ecs.systems.renderSystem")` submits ECS sprites. Neither is required to draw a scene. They use LÖVE graphics and should run within the appropriate draw context.
 
 ## Render pipeline
 
@@ -23,7 +23,7 @@ Required draw data is `Transform.x/y` and normally `Sprite.image`; optional fiel
 ## Example
 
 ```lua
-local Pipeline = require("engine.graphics.render_pipeline")
+local Pipeline = require("engine.graphics.RenderPipeline")
 local RenderSystem = require("engine.ecs.systems.renderSystem")
 local pipeline = Pipeline.new()
 -- In a scene draw, with world and tileRenderer created during setup:

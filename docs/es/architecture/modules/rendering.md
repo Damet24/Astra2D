@@ -31,7 +31,7 @@ El renderizador lee `layer.data` como array plano por filas, el ancho y alto de 
 Una escena típica con mundo y cámara opcional puede enviar ambos tipos juntos:
 
 ```lua
-local RenderPipeline = require("engine.graphics.render_pipeline")
+local RenderPipeline = require("engine.graphics.RenderPipeline")
 local RenderSystem = require("engine.ecs.systems.renderSystem")
 -- En la preparación: self.pipeline = RenderPipeline.new()
 -- self.tilemapRender, self.world y, opcionalmente, self.cameraManager pertenecen a la escena.

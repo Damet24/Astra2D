@@ -4,8 +4,8 @@ The engine provides a constructor and a rectangle factory, not its own physics o
 
 ## Construction and factory
 
-- `PhysicsWorld.new(gravityX, gravityY, sleeping)` from `require("engine.physics.physics_world")` calls `love.physics.setMeter(PhysicsWorld.PIXELS_PER_METER)` (64, global) and returns `love.physics.newWorld(gravityX or 0, gravityY or 0, sleeping or false)`. `World.new` invokes it. Set the scale before creating bodies; LÖVE uses pixels in its API, so do not divide positions by 64.
-- `PhysicsFactory.create(world, entity)` from `require("engine.physics.physics_factory")` returns `body, fixture`. It requires `Transform`, `RigidBody`, and `Collider`, asserts that `RigidBody.body` is absent, `Collider.shape == "rectangle"`, and positive `width` and `height`. Missing components, duplicate body, unsupported shape or invalid dimensions raise assertions; incompatible field types and LÖVE errors may also propagate.
+- `PhysicsWorld.new(gravityX, gravityY, sleeping)` from `require("engine.physics.PhysicsWorld")` calls `love.physics.setMeter(PhysicsWorld.PIXELS_PER_METER)` (64, global) and returns `love.physics.newWorld(gravityX or 0, gravityY or 0, sleeping or false)`. `World.new` invokes it. Set the scale before creating bodies; LÖVE uses pixels in its API, so do not divide positions by 64.
+- `PhysicsFactory.create(world, entity)` from `require("engine.physics.PhysicsFactory")` returns `body, fixture`. It requires `Transform`, `RigidBody`, and `Collider`, asserts that `RigidBody.body` is absent, `Collider.shape == "rectangle"`, and positive `width` and `height`. Missing components, duplicate body, unsupported shape or invalid dimensions raise assertions; incompatible field types and LÖVE errors may also propagate.
 
 `Transform.x`, `y` give the body position; `rotation` defaults to 0 radians. `RigidBody.type` defaults to `"dynamic"` (LÖVE also supports `"static"` and `"kinematic"`). `Collider.offsetX`/`offsetY` default to 0, `density` to 1, and `sensor` to false. The factory creates one centered rectangle with those local offsets, sets fixture user data to the entity ID and stores the body as `RigidBody.body`. Adding components alone does not create it.
 
@@ -20,7 +20,7 @@ Systems are opt-in. A typical registration order is `movementSystem`, `physicsMo
 ```lua
 local World = require("engine.ecs.world")
 local C = require("engine.ecs.component")
-local Factory = require("engine.physics.physics_factory")
+local Factory = require("engine.physics.PhysicsFactory")
 local world = World.new(0, 640, true)
 world:addSystem(require("engine.ecs.systems.physicsSystem"))
 world:addSystem(require("engine.ecs.systems.physicsSyncSystem"))

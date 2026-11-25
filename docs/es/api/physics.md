@@ -4,8 +4,8 @@ El motor proporciona un constructor y una fábrica de rectángulos, no una API p
 
 ## Construcción y fábrica
 
-- `PhysicsWorld.new(gravityX, gravityY, sleeping)` de `require("engine.physics.physics_world")` llama a `love.physics.setMeter(PhysicsWorld.PIXELS_PER_METER)` (64, global) y devuelve `love.physics.newWorld(gravityX or 0, gravityY or 0, sleeping or false)`. `World.new` lo invoca. Establece la escala antes de crear cuerpos; la API de LÖVE usa píxeles, así que no dividas las posiciones por 64.
-- `PhysicsFactory.create(world, entity)` de `require("engine.physics.physics_factory")` devuelve `body, fixture`. Requiere `Transform`, `RigidBody` y `Collider`, y verifica que no exista `RigidBody.body`, que `Collider.shape == "rectangle"` y que `width` y `height` sean positivos. La ausencia de componentes, cuerpo duplicado, forma no admitida o dimensiones inválidas producen aserciones; también pueden propagarse tipos incompatibles y errores de LÖVE.
+- `PhysicsWorld.new(gravityX, gravityY, sleeping)` de `require("engine.physics.PhysicsWorld")` llama a `love.physics.setMeter(PhysicsWorld.PIXELS_PER_METER)` (64, global) y devuelve `love.physics.newWorld(gravityX or 0, gravityY or 0, sleeping or false)`. `World.new` lo invoca. Establece la escala antes de crear cuerpos; la API de LÖVE usa píxeles, así que no dividas las posiciones por 64.
+- `PhysicsFactory.create(world, entity)` de `require("engine.physics.PhysicsFactory")` devuelve `body, fixture`. Requiere `Transform`, `RigidBody` y `Collider`, y verifica que no exista `RigidBody.body`, que `Collider.shape == "rectangle"` y que `width` y `height` sean positivos. La ausencia de componentes, cuerpo duplicado, forma no admitida o dimensiones inválidas producen aserciones; también pueden propagarse tipos incompatibles y errores de LÖVE.
 
 `Transform.x`, `y` indican la posición del cuerpo; `rotation` vale 0 radianes por defecto. `RigidBody.type` vale `"dynamic"` por defecto (LÖVE también admite `"static"` y `"kinematic"`). `Collider.offsetX`/`offsetY` valen 0, `density` vale 1 y `sensor` vale false por defecto. La fábrica crea un rectángulo centrado con esos desplazamientos locales, establece el ID de entidad como datos de usuario del fixture y guarda el cuerpo en `RigidBody.body`. Añadir componentes por sí solo no lo crea.
 
@@ -20,7 +20,7 @@ Los sistemas son opcionales. Un orden habitual de registro es `movementSystem`, 
 ```lua
 local World = require("engine.ecs.world")
 local C = require("engine.ecs.component")
-local Factory = require("engine.physics.physics_factory")
+local Factory = require("engine.physics.PhysicsFactory")
 local world = World.new(0, 640, true)
 world:addSystem(require("engine.ecs.systems.physicsSystem"))
 world:addSystem(require("engine.ecs.systems.physicsSyncSystem"))
