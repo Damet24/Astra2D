@@ -1,7 +1,7 @@
 local Engine = require("engine.engine")
 
-local resourcesDefinitions = require("game.resources.definitions")
-local inputMaps = require("game.inputMaps")
+local resourcesDefinitions = require("game.config.resourceDefinitions")
+local inputMaps = require("game.config.inputMaps")
 
 local GAME_RESOLUTION = {
 	width = 1280,
