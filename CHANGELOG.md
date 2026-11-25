@@ -2,7 +2,7 @@
 
 All notable versions of Astra 2D are documented in this file.
 
-## [0.3.0]
+## [0.3.0] - 2026-11-24
 
 ### Added
 
