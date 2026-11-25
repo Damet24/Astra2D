@@ -31,4 +31,7 @@ features:
 
   - title: Gestión de audio
     details: Maneja música y efectos de sonido mediante un servicio de audio centralizado.
+
+  - title: CLI del proyecto
+    details: Genera proyectos LÖVE y crea módulos de escena con el comando opcional `astra2d`.
 ---

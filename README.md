@@ -43,6 +43,7 @@ The full documentation is published on [GitHub Pages](https://damet24.github.io/
 
 - [Installation](docs/getting-started/installation.md)
 - [Your First Project](docs/getting-started/first-project.md)
+- [Project CLI](docs/getting-started/cli.md)
 - [Architecture](docs/architecture/overview.md)
 - [Guides](docs/guides/index.md)
 - [API reference](docs/api/index.md)

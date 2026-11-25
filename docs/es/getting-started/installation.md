@@ -6,6 +6,7 @@ Astra 2D se ejecuta como código fuente Lua dentro de un juego de [LÖVE](https:
 
 - **LÖVE 11.5**, la versión utilizada en esta guía. Aquí no se han verificado otras versiones. Instálalo desde [love2d.org](https://love2d.org/) y asegúrate de que el comando `love` esté disponible, o usa la ruta de tu ejecutable de LÖVE.
 - **El código fuente del repositorio**, incluido `engine/lib/` y, para el ejemplo, `game/` y sus assets. Git es opcional si descargas el repositorio como archivo comprimido.
+- **Node.js 20 o superior**, solo si quieres usar la [CLI del proyecto](/es/getting-started/cli) opcional para generar un proyecto nuevo.
 
 LÖVE incluye el entorno de ejecución de Lua. Las bibliotecas Lua del motor están incluidas en `engine/lib/`; los ejemplos no necesitan una instalación separada de Lua ni un gestor de paquetes.
 
@@ -24,6 +25,19 @@ La documentación y el código deben proceder de la misma revisión: el último 
 En Windows también puedes arrastrar la carpeta del proyecto sobre el ejecutable de LÖVE. Si `love` no está en tu `PATH`, ejecuta el programa instalado con el directorio del proyecto como argumento.
 
 El `main.lua` actual comienza en `mainMenu`. Las asignaciones de `game/config/inputMaps.lua` usan las flechas izquierda y derecha (o la cruceta y el stick izquierdo) para moverse, `Space` o el botón `A` del mando para saltar, y `Escape` o el botón `Start` para pausar. `Return`, `Space`, el clic izquierdo o el botón `A` aceptan las entradas del menú.
+
+## Crear un proyecto nuevo con la CLI
+
+Si prefieres un proyecto limpio en lugar del ejemplo del repositorio, la CLI opcional `astra2d` genera el punto de entrada, los archivos de configuración y una escena inicial:
+
+```sh
+npm install -g astra2d-cli
+astra2d init my-game
+cd my-game
+love .
+```
+
+La CLI necesita Node.js 20+; LÖVE sigue siendo necesario para ejecutar el juego. Consulta la [CLI del proyecto](/es/getting-started/cli) para ver la estructura generada, las opciones y el comando `scene:create`. También puedes [crear los archivos a mano](/es/getting-started/first-project).
 
 ## Usar el motor en otro proyecto
 

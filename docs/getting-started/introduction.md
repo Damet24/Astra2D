@@ -7,7 +7,9 @@ and tilemaps, while leaving the rules of your game in your own code.
 If you are new to Astra 2D, this page explains what the engine offers and how its
 pieces fit together. The [Installation](/getting-started/installation) page gets
 the sample project running, and [Your First Project](/getting-started/first-project)
-walks you through creating a small game from scratch.
+walks you through creating a small game from scratch. The optional
+[project CLI](/getting-started/cli) can generate the entry point, configuration
+files, and an initial scene for you.
 
 ## What Astra 2D provides
 

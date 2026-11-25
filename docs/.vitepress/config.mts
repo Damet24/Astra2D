@@ -15,6 +15,7 @@ const enSidebar = [
     items: [
       { text: "Introduction", link: "/getting-started/introduction" },
       { text: "Installation", link: "/getting-started/installation" },
+      { text: "Project CLI", link: "/getting-started/cli" },
       { text: "Your First Project", link: "/getting-started/first-project" },
     ],
   },
@@ -101,6 +102,7 @@ const esSidebar = [
     items: [
       { text: "Introducción", link: "/es/getting-started/introduction" },
       { text: "Instalación", link: "/es/getting-started/installation" },
+      { text: "CLI del proyecto", link: "/es/getting-started/cli" },
       { text: "Tu primer proyecto", link: "/es/getting-started/first-project" },
     ],
   },
@@ -206,7 +208,7 @@ export default defineConfig({
     socialLinks: [
       {
         icon: "github",
-        link: "https://github.com/Damet24/lua_engine",
+        link: "https://github.com/Damet24/Astra2D",
       },
     ],
   },

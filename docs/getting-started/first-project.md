@@ -2,6 +2,17 @@
 
 This guide creates a minimal Astra 2D project: one scene, a few input actions, and a movable square. It needs no assets, cameras, or ECS. Install LÖVE 11.5 and obtain the engine source as described in [Installation](/getting-started/installation).
 
+You can generate this layout automatically with the optional [project CLI](/getting-started/cli) instead of writing the files by hand:
+
+```sh
+npm install -g astra2d-cli
+astra2d init my-game
+cd my-game
+love .
+```
+
+The steps below build the same structure manually, so they also work without Node.js.
+
 ## Project structure
 
 Create a folder for the game and copy the engine into it:

@@ -2,6 +2,17 @@
 
 Esta guía crea un proyecto mínimo de Astra 2D: una escena, unas pocas acciones de entrada y un cuadrado que se mueve. No necesita assets, cámaras ni ECS. Instala LÖVE 11.5 y obtén el código fuente del motor como se describe en [Instalación](/es/getting-started/installation).
 
+Puedes generar esta estructura automáticamente con la [CLI del proyecto](/es/getting-started/cli) opcional en lugar de escribir los archivos a mano:
+
+```sh
+npm install -g astra2d-cli
+astra2d init my-game
+cd my-game
+love .
+```
+
+Los pasos siguientes construyen la misma estructura manualmente, así que también funcionan sin Node.js.
+
 ## Estructura del proyecto
 
 Crea una carpeta para el juego y copia el motor dentro:

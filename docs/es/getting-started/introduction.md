@@ -7,7 +7,9 @@ cámaras y tilemaps, y deja las reglas de tu juego en tu propio código.
 Si eres nuevo en Astra 2D, esta página explica qué ofrece el motor y cómo encajan
 sus piezas. La página de [Instalación](/es/getting-started/installation) pone en
 marcha el proyecto de ejemplo, y [Tu primer proyecto](/es/getting-started/first-project)
-te guía para crear un juego pequeño desde cero.
+te guía para crear un juego pequeño desde cero. La [CLI del proyecto](/es/getting-started/cli)
+opcional puede generar por ti el punto de entrada, los archivos de configuración
+y una escena inicial.
 
 ## Qué ofrece Astra 2D
 

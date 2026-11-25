@@ -31,4 +31,7 @@ features:
 
   - title: Audio Management
     details: Handle music and sound effects through a centralized audio service.
+
+  - title: Project CLI
+    details: Scaffold LÖVE projects and create scene modules with the optional `astra2d` command.
 ---

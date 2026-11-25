@@ -6,6 +6,7 @@ Astra 2D runs as Lua source inside a [LÖVE](https://love2d.org/) game. This rep
 
 - **LÖVE 11.5**, the version used for this guide. Other versions have not been verified here. Install it from [love2d.org](https://love2d.org/) and make sure the `love` command is available, or use the path to your LÖVE executable.
 - **The repository source**, including `engine/lib/` and, for the sample, `game/` and its assets. Git is optional if you download the repository as an archive.
+- **Node.js 20 or newer**, only if you want to use the optional [project CLI](/getting-started/cli) to generate a new project.
 
 LÖVE includes the Lua runtime. The engine's Lua libraries are bundled in `engine/lib/`; no separate Lua installation or package manager is needed for the examples.
 
@@ -24,6 +25,19 @@ Documentation and code should come from the same revision: the branch tip can ch
 On Windows you can instead drag the project folder onto the LÖVE executable. If `love` is not on your `PATH`, invoke the installed executable with the project directory as its argument.
 
 The current `main.lua` starts in `mainMenu`. The bindings in `game/config/inputMaps.lua` use the left and right arrows (or the d-pad and left stick) to move, `Space` or gamepad `A` to jump, and `Escape` or gamepad `Start` to pause. `Return`, `Space`, a left click, or gamepad `A` accepts menu entries.
+
+## Create a new project with the CLI
+
+If you want a fresh project instead of the repository sample, the optional `astra2d` CLI generates the entry point, configuration files, and an initial scene:
+
+```sh
+npm install -g astra2d-cli
+astra2d init my-game
+cd my-game
+love .
+```
+
+Node.js 20+ is needed for the CLI; LÖVE is still needed to run the game. See [Project CLI](/getting-started/cli) for the generated layout, options, and the `scene:create` command. You can also [build the files by hand](/getting-started/first-project).
 
 ## Use the engine in another project
 

@@ -1,10 +1,13 @@
-
-name: Deploy VitePress Documentation
+name: Build and publish documentation
 
 on:
   push:
-    tags:
-      - 'v*'
+    branches:
+      - master
+    paths:
+      - "docs/**"
+      - "README.md"
+      - ".github/workflows/deploy.yml"
 
   workflow_dispatch:
 
@@ -19,6 +22,7 @@ concurrency:
 
 jobs:
   build:
+    name: Build documentation
     runs-on: ubuntu-latest
 
     steps:
@@ -49,12 +53,13 @@ jobs:
           path: docs/.vitepress/dist
 
   deploy:
+    name: Publish documentation
+    needs: build
+    runs-on: ubuntu-latest
+
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-
-    needs: build
-    runs-on: ubuntu-latest
 
     steps:
       - name: Deploy to GitHub Pages
