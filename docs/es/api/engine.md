@@ -39,9 +39,9 @@ Salvo indicación contraria, los métodos **no devuelven valores**; se propagan 
 ```lua
 local Engine = require("engine.engine")
 local engine = Engine.new({
-    initialScene = "levels.level01",
-    inputMaps = require("game.inputMaps"),
-    resourceDefinitions = require("game.resources.definitions"),
+    initialScene = "mainMenu",
+    inputMaps = require("game.config.inputMaps"),
+    resourceDefinitions = require("game.config.resourceDefinitions"),
 })
 function love.load() engine:load() end
 function love.update(dt) engine:update(dt) end

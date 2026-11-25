@@ -2,7 +2,7 @@
 
 Astra 2D is a modular engine for building 2D games with Lua and [LÖVE](https://love2d.org/). It provides tools to organize scenes, entities, resources, and rendering, while each game defines its own rules and content in its scenes and systems.
 
-The repository includes the engine source in `engine/`, a demo game in `game/`, and a standalone example in `examples/collect/`.
+The repository includes the engine source in `engine/`, a demo game in `game/`, and a standalone example in `examples/collect/`. The demo keeps its configuration in `game/config/`: input maps, resource definitions, and collision layer IDs.
 
 ## Features
 
@@ -12,7 +12,7 @@ The repository includes the engine source in `engine/`, a demo game in `game/`, 
 - **Input:** configurable actions for the keyboard, mouse, and gamepad (buttons and axes), with held, pressed, and released state queries.
 - **Audio:** music and sound-effect playback through a shared manager.
 - **Cameras and rendering:** world views, logical resolution, scaling, and layered drawing.
-- **Physics:** `love.physics` integration through bodies, rectangular colliders, and ECS systems.
+- **Physics:** `love.physics` integration through bodies, rectangular colliders with collision filters, and ECS systems.
 - **Tiled maps:** rendering of tile layers exported to Lua; collisions are created separately.
 
 ## Requirements
@@ -31,7 +31,7 @@ From the root of a repository checkout:
 love .
 ```
 
-If `love` is not on your `PATH`, run the installed LÖVE executable and pass it the repository folder. The current `main.lua` starts in `levels.level01`.
+If `love` is not on your `PATH`, run the installed LÖVE executable and pass it the repository folder. The current `main.lua` starts in `mainMenu`.
 
 Demo controls: the left and right arrows (or the d-pad and left stick) move, **Space** or gamepad **A** jumps, and **Esc** or gamepad **Start** pauses. To run the standalone Collect example, see its [instructions](docs/examples/index.md).
 

@@ -74,6 +74,11 @@ astra2d init . ../proyectos        # esa ruta, sin subcarpeta
 Falla y no escribe nada si el destino ya existe, o si al usar `.` ya están
 `engine/`, `main.lua` o `game/`.
 
+La plantilla genera `main.lua`, que importa `game.config.resourceDefinitions` y
+`game.config.inputMaps`, y `game/config/` con `collisionLayer.lua`,
+`inputMaps.lua` y `resourceDefinitions.lua`. Las escenas se crean en
+`game/scenes/`.
+
 ### `scene:create`
 
 Crea `<name>.lua` desde `src/templates/scene/scene.lua`, sustituyendo
@@ -82,13 +87,13 @@ de escena: `onLoad`, `onEnter`, `onExit`, `onDestroy`, `update` y `draw`.
 
 ```sh
 astra2d scene:create MyScene
-astra2d scene:create MyScene games/scenes
+astra2d scene:create MyScene game/scenes
 astra2d s:c MyScene tests/scenes
 astra2d scene:create --help
 ```
 
-Por defecto escribe en `games/scenes/MyScene.lua` (módulo Lua
-`games.scenes.MyScene`). El segundo argumento permite elegir otro directorio.
+Por defecto escribe en `game/scenes/MyScene.lua` (módulo Lua
+`game.scenes.MyScene`). El segundo argumento permite elegir otro directorio.
 El nombre debe ser un identificador Lua válido y no se sobrescriben archivos
 existentes.
 

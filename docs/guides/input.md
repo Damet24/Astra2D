@@ -6,7 +6,7 @@ Move a marker with keys, mouse clicks, or a gamepad, and count presses and relea
 
 ## 1. Map actions to devices
 
-Add these entries to the table in `game/inputMaps.lua`, preserving other actions:
+Add these entries to the table in `game/config/inputMaps.lua`, preserving other actions:
 
 ```lua
 guide_left = {
@@ -30,7 +30,7 @@ guide_count = {
 },
 ```
 
-Each action is a table with optional `keys`, `mouse`, and `gamepad` sections. `keys` holds LÖVE key names, `mouse` holds LÖVE button numbers (`1` left, `2` right, `3` middle), and `gamepad` holds LÖVE gamepad button names plus an optional `axes` table that maps an axis name to `-1` or `1`. Ensure `Engine.new` receives `inputMaps = require("game.inputMaps")` and set `initialScene = "guideInput"`.
+Each action is a table with optional `keys`, `mouse`, and `gamepad` sections. `keys` holds LÖVE key names, `mouse` holds LÖVE button numbers (`1` left, `2` right, `3` middle), and `gamepad` holds LÖVE gamepad button names plus an optional `axes` table that maps an axis name to `-1` or `1`. Ensure `Engine.new` receives `inputMaps = require("game.config.inputMaps")` and set `initialScene = "guideInput"`.
 
 ## 2. Create the input scene
 
@@ -79,7 +79,7 @@ return InputScene
 
 ## 3. Run and observe
 
-Run `love .` from the project root. Hold Left/A, Right/D, the d-pad, or the left stick to move; press and release Space, a mouse button, or gamepad A to update the counters. Opposite directions cancel. The bounds assume the first project's `320 x 180` logical viewport; adapt them for a different resolution. The example game's `game/inputMaps.lua` and `game/ecs/systems/playerSystem.lua` also map and query actions.
+Run `love .` from the project root. Hold Left/A, Right/D, the d-pad, or the left stick to move; press and release Space, a mouse button, or gamepad A to update the counters. Opposite directions cancel. The bounds assume the first project's `320 x 180` logical viewport; adapt them for a different resolution. The example game's `game/config/inputMaps.lua` and `game/ecs/systems/playerSystem.lua` also map and query actions.
 
 ## Frame lifecycle and edges
 

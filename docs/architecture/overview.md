@@ -16,7 +16,7 @@ cameras, and rendering components as needed.
 
 ```text
                           main.lua
-     forwards LÖVE load / update / draw / quit / keypressed / keyreleased
+     forwards LÖVE load / update / draw / quit
                               │
                               ▼
 ┌───────────────────────────────────────────────────────────────────┐
@@ -111,7 +111,7 @@ method details for quick lookup.
 | [Scene](modules/scene.md) | Defines scene lifecycle and update/draw policies. |
 | [World](modules/world.md) | Holds ECS state, systems, events, and physics. |
 | [ResourceManager](modules/resource-manager.md) | Loads and shares resources among consumers. |
-| [InputManager](modules/input-manager.md) | Maps keyboard input to actions. |
+| [InputManager](modules/input-manager.md) | Maps keyboard, mouse, and gamepad actions to named actions. |
 | [AudioManager](modules/audio-manager.md) | Coordinates music and sound effects. |
 | [CameraManager](modules/camera-manager.md) | Manages scene cameras and world views. |
 | [Rendering](modules/rendering.md) | Connects the viewport, camera, pipeline, and renderers. |

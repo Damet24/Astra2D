@@ -6,14 +6,14 @@ Start looping music, trigger an effect, and pause or restart the music. Start fr
 
 ## 1. Register sounds and actions
 
-Create `game/resources/definitions.lua` and its parent directory if they do not exist; start the file with `return {}`. Add these entries inside the returned table:
+Create `game/config/resourceDefinitions.lua` and its parent directory if they do not exist; start the file with `return {}`. Add these entries inside the returned table:
 
 ```lua
 guide_music = { type = "sound", path = "game/assets/guide-music.ogg", soundType = "stream" },
 guide_effect = { type = "sound", path = "game/assets/guide-effect.wav", soundType = "static" },
 ```
 
-Add these entries to `game/inputMaps.lua`, keeping any existing entries in both tables:
+Add these entries to `game/config/inputMaps.lua`, keeping any existing entries in both tables:
 
 ```lua
 guide_effect = { keys = { "space" } },
@@ -21,7 +21,7 @@ guide_music_pause = { keys = { "m" } },
 guide_music_restart = { keys = { "r" } },
 ```
 
-These snippets are table entries. Ensure `Engine.new` receives `resourceDefinitions = require("game.resources.definitions")` and `inputMaps = require("game.inputMaps")`; set `initialScene = "guideAudio"`. The engine defaults all three audio volumes to `1.0`. Optionally replace the existing `audio` table in the engine configuration with `audio = { masterVolume = 1.0, musicVolume = 0.5, sfxVolume = 0.8 }`.
+These snippets are table entries. Ensure `Engine.new` receives `resourceDefinitions = require("game.config.resourceDefinitions")` and `inputMaps = require("game.config.inputMaps")`; set `initialScene = "guideAudio"`. The engine defaults all three audio volumes to `1.0`. Optionally replace the existing `audio` table in the engine configuration with `audio = { masterVolume = 1.0, musicVolume = 0.5, sfxVolume = 0.8 }`. For a batch of sounds under one root directory, [resource definition utilities](/api/resources-utils) provide `addSound`.
 
 ## 2. Create the audio scene
 

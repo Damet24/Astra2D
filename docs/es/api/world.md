@@ -16,6 +16,7 @@ Salvo donde se indique un retorno, los métodos no devuelven valores. Los nombre
 | `hasComponent(entity, name)` | Devuelve si el valor almacenado no es `nil`. |
 | `removeComponent(entity, name)` | Elimina la entrada si existe; quitar `RigidBody` no destruye su cuerpo. |
 | `query(componentNames, callback)` | Recorre los IDs vivos que coinciden con todos los nombres del array y llama a `callback(entity, components)`, con componentes indexados por nombre. Un array vacío coincide con todos; el orden no está definido (`pairs`). La coincidencia usa veracidad, no solo ausencia de `nil`. |
+| `query2(compA, compB, callback)` | Atajo para exactamente dos componentes. Consulta directamente ambos almacenes; si falta alguno, no hace nada. Para cada entidad presente en los dos llama a `callback(entity, a, b)` con las propias tablas de componente. No tiene modo "todas las entidades", no construye una tabla indexada y no valida el callback. |
 | `onCollisionStarted(entity, callback)` | Registra un callback para inicios de contacto que impliquen a la entidad; devuelve una función de desuscripción. Consulta [callbacks de colisión](#callbacks-de-colision). |
 | `onCollisionEnded(entity, callback)` | Registra un callback para fines de contacto que impliquen a la entidad; devuelve una función de desuscripción. |
 

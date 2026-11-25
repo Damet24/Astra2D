@@ -6,7 +6,7 @@ Crea un contador en marcha y una superposición de pausa. Escape pausa y reanuda
 
 ## 1. Configurar la acción y la escena inicial
 
-Añade `pause = { keys = { "escape" } }` a la tabla de `game/inputMaps.lua`, conservando las demás acciones. En `main.lua`, establece `initialScene = "guideLevel"` en `Engine.new` y mantén `inputMaps = require("game.inputMaps")`; el motor instala los callbacks de entrada de LÖVE durante `Engine:load()`.
+Añade `pause = { keys = { "escape" } }` a la tabla de `game/config/inputMaps.lua`, conservando las demás acciones. En `main.lua`, establece `initialScene = "guideLevel"` en `Engine.new` y mantén `inputMaps = require("game.config.inputMaps")`; el motor instala los callbacks de entrada de LÖVE durante `Engine:load()`.
 
 ## 2. Crear la escena en marcha
 
@@ -88,7 +88,7 @@ Aquí `drawBelow = true` dibuja el contador debajo, mientras que el valor predet
 - Las transiciones se encolan: el update actual termina antes de aplicarlas. Las operaciones encoladas por hooks durante el procesamiento esperan a otra pasada. No esperes un cambio inmediato en la pila.
 - Un módulo ausente o sin constructor `.new(context)` falla cuando se procesa la carga encolada. El cargador incorporado ignora el argumento opcional `dependencies` de la transición; usa `context` para servicios compartidos.
 - `clearAndPush` llama a `onExit` incluso en escenas cubiertas; los hooks deben tolerar salidas repetidas. Los errores en el ciclo de vida no se revierten y pueden interrumpir la limpieza.
-- Reenvía ambos callbacks de teclado y proporciona la asignación de la acción; de lo contrario, Escape no funcionará. La superposición pausa los updates de escenas, no el audio globalmente.
+- Proporciona la asignación de la acción y no reenvíes los callbacks de entrada; `Engine:load()` los instala. La superposición pausa los updates de escenas, no el audio globalmente.
 
 ## Más información
 

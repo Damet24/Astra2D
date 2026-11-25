@@ -11,11 +11,11 @@ LÖVE incluye el entorno de ejecución de Lua. Las bibliotecas Lua del motor est
 
 ## Ejecutar el proyecto de ejemplo
 
-Clona la rama compatible `docs/vitepress-setup` y ejecuta LÖVE con la raíz del repositorio como fuente del juego:
+Clona el repositorio y ejecuta LÖVE con la raíz del repositorio como fuente del juego:
 
 ```sh
-git clone --branch docs/vitepress-setup https://github.com/Damet24/lua_engine.git
-cd lua_engine
+git clone https://github.com/Damet24/Astra2D.git
+cd Astra2D
 love .
 ```
 
@@ -23,7 +23,7 @@ La documentación y el código deben proceder de la misma revisión: el último 
 
 En Windows también puedes arrastrar la carpeta del proyecto sobre el ejecutable de LÖVE. Si `love` no está en tu `PATH`, ejecuta el programa instalado con el directorio del proyecto como argumento.
 
-El `main.lua` actual comienza directamente en `levels.level01`, no en el menú principal. Las asignaciones de `game/inputMaps.lua` usan las flechas izquierda y derecha (o la cruceta y el stick izquierdo) para moverse, `Space` o el botón `A` del mando para saltar, y `Escape` o el botón `Start` para pausar. `Return`, `Space`, el clic izquierdo o el botón `A` aceptan las entradas del menú.
+El `main.lua` actual comienza en `mainMenu`. Las asignaciones de `game/config/inputMaps.lua` usan las flechas izquierda y derecha (o la cruceta y el stick izquierdo) para moverse, `Space` o el botón `A` del mando para saltar, y `Escape` o el botón `Start` para pausar. `Return`, `Space`, el clic izquierdo o el botón `A` aceptan las entradas del menú.
 
 ## Usar el motor en otro proyecto
 
@@ -36,7 +36,8 @@ my-game/                  # fuente del juego LÖVE
   main.lua
   engine/                 # copia completa, incluido engine/lib/
   game/
-    inputMaps.lua
+    config/
+      inputMaps.lua
     scenes/
       hello.lua
 ```

@@ -6,14 +6,14 @@ Muestra una imagen y una fuente mediante el gestor de recursos y libera el inter
 
 ## 1. Registrar los recursos
 
-Crea `game/resources/definitions.lua` y su directorio padre si no existen; comienza el archivo con `return {}`. Añade estas entradas dentro de la tabla devuelta, conservando las existentes:
+Crea `game/config/resourceDefinitions.lua` y su directorio padre si no existen; comienza el archivo con `return {}`. Añade estas entradas dentro de la tabla devuelta, conservando las existentes:
 
 ```lua
 guide_logo = { type = "image", path = "game/assets/guide-logo.png" },
 guide_font = { type = "font", size = 18 },
 ```
 
-Son entradas de tabla, no un archivo Lua independiente. Asegúrate de que `Engine.new` en `main.lua` reciba `resourceDefinitions = require("game.resources.definitions")` y establece `initialScene = "guideResources"`. El cargador predeterminado de imágenes usa una ruta del sistema de archivos de LÖVE; el de fuentes crea una fuente por tamaño y no acepta una ruta de archivo de fuente.
+Son entradas de tabla, no un archivo Lua independiente. Asegúrate de que `Engine.new` en `main.lua` reciba `resourceDefinitions = require("game.config.resourceDefinitions")` y establece `initialScene = "guideResources"`. El cargador predeterminado de imágenes usa una ruta del sistema de archivos de LÖVE; el de fuentes crea una fuente por tamaño y no acepta una ruta de archivo de fuente. Para muchas imágenes o sonidos que comparten directorio, las [utilidades de definiciones de recursos](/es/api/resources-utils) ofrecen `addImages` y `addSound`.
 
 ## 2. Crear la escena que consume recursos
 
@@ -58,7 +58,7 @@ return Resources
 
 Ejecuta `love .` desde la raíz del proyecto. La imagen debería aparecer debajo del texto. Al cerrar el juego se destruye la escena y se liberan sus intereses. Para liberar solo la imagen antes, llama a `self.context.resourceManager:release(self, "guide_logo")` y deja de dibujar o usar `self.logo` después.
 
-`game/scenes/pause.lua` del repositorio utiliza `get(self, "pause_font")` y `releaseAll(self)` de la misma manera. Sus definiciones están en `game/resources/definitions.lua`; esos IDs del juego de ejemplo no se proporcionan automáticamente en un proyecto nuevo.
+`game/scenes/pause.lua` del repositorio utiliza `get(self, "pause_font")` y `releaseAll(self)` de la misma manera. Sus definiciones están en `game/config/resourceDefinitions.lua`; esos IDs del juego de ejemplo no se proporcionan automáticamente en un proyecto nuevo.
 
 ## Ciclo de vida y compartición
 

@@ -2,6 +2,21 @@
 
 All notable versions of Astra 2D are documented in this file.
 
+## [0.3.0]
+
+### Added
+
+- Collision categories and filters: `Collider.layer` (categories 1-16, default `{ 1 }`) and `Collider.mask` (accepted categories), applied automatically by `PhysicsFactory.create` through the new `engine.physics.collisionFilter` module. Conventional IDs are listed in `game/config/collisionLayer.lua`.
+- `World:query2(compA, compB, callback)`, a two-component query that passes both component tables directly to the callback; `physicsSyncSystem` now uses it.
+- `rgba` and `hexToRgb` color helpers in `engine.graphics.utils`, and `addImages` / `addSound` definition helpers in `engine.resources.utils`, with English and Spanish API pages.
+
+### Changed
+
+- **Breaking:** engine modules were renamed to PascalCase: `engine.graphics.RenderPipeline`, `engine.physics.PhysicsFactory`, and `engine.physics.PhysicsWorld`. Update all `require` paths.
+- **Breaking:** game configuration moved to `game/config/` (`inputMaps.lua`, `resourceDefinitions.lua`, and the new `collisionLayer.lua`). Entry points now require `game.config.inputMaps` and `game.config.resourceDefinitions`.
+- The CLI template follows the new configuration layout, creates scenes in `game/scenes/` by default (previously `games/scenes/`), and ships as `astra2d-cli` 1.0.5.
+- Installation, first-project, input, scenes, resources, audio, physics, ECS, and reference documentation were updated in English and Spanish.
+
 ## [0.2.0] - 2026-11-18
 
 ### Added

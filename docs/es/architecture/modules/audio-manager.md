@@ -10,7 +10,7 @@
 
 `AudioManager.new(config)` requiere `config.resourceManager`. Copia `masterVolume`, `musicVolume` y `sfxVolume` de la configuración. Cuando lo construye `Engine.new`, estos valores proceden de `audio` y cada uno vale `1.0` por defecto; la construcción directa no establece valores predeterminados, por lo que hay que proporcionar los tres números. No se implementan validación o limitación de volumen ni una API para cambiarlo. Una fuente nueva de música recibe `masterVolume * musicVolume`; un clon nuevo de efecto recibe `masterVolume * sfxVolume`. Cambiar esos campos no actualiza las fuentes que ya se están reproduciendo.
 
-Los IDs deben resolver a fuentes de audio LÖVE compatibles. El cargador predeterminado de sonido requiere un `path` de tipo cadena y `soundType = "static"` o `"stream"`. En `game/resources/definitions.lua`, `music` utiliza `stream` y `jump` utiliza `static`. `playMusic(id, { loop = true })` activa el bucle solo cuando `loop` es exactamente `true`; si se omite o tiene otro valor, no hay bucle al iniciar una pista nueva.
+Los IDs deben resolver a fuentes de audio LÖVE compatibles. El cargador predeterminado de sonido requiere un `path` de tipo cadena y `soundType = "static"` o `"stream"`. En `game/config/resourceDefinitions.lua`, `music` utiliza `stream` y `jump` utiliza `static`. `playMusic(id, { loop = true })` activa el bucle solo cuando `loop` es exactamente `true`; si se omite o tiene otro valor, no hay bucle al iniciar una pista nueva.
 
 ## API pública
 

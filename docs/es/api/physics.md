@@ -9,6 +9,21 @@ El motor proporciona un constructor y una fábrica de rectángulos, no una API p
 
 `Transform.x`, `y` indican la posición del cuerpo; `rotation` vale 0 radianes por defecto. `RigidBody.type` vale `"dynamic"` por defecto (LÖVE también admite `"static"` y `"kinematic"`). `Collider.offsetX`/`offsetY` valen 0, `density` vale 1 y `sensor` vale false por defecto. La fábrica crea un rectángulo centrado con esos desplazamientos locales, establece el ID de entidad como datos de usuario del fixture y guarda el cuerpo en `RigidBody.body`. Añadir componentes por sí solo no lo crea.
 
+## Capas y filtros de colisión
+
+`PhysicsFactory.create` aplica los filtros mediante `require("engine.physics.collisionFilter")`; no hace falta configuración adicional. `Collider.layer` es un array denso con las categorías propias de la fixture (enteros del 1 al 16, se ignoran duplicados) y vale `{ 1 }` por defecto. `Collider.mask` es un array denso de las categorías que la fixture **acepta**. Si `mask` es `nil`, se conserva el comportamiento de Box2D y la fixture colisiona con todas las categorías; si se proporciona, el motor lo invierte para construir la máscara de ignorados de Box2D, por lo que `mask = {}` no colisiona con nada. Ambas fixtures deben aceptar la categoría de la otra para que exista contacto. Los tipos inválidos, los no enteros, los valores fuera de 1-16 o un `layer` vacío producen aserciones.
+
+`game/config/collisionLayer.lua` recoge los IDs habituales del juego de ejemplo (`WORLD = 1`, `PLAYER = 2`, `ENEMY = 3`, `PROJECTILE = 4`, `COLLECTIBLE = 5`, `SENSOR = 6`). Es una tabla Lua normal, no configuración del motor: impórtala y usa sus valores en los colliders que necesites.
+
+```lua
+local Layers = require("game.config.collisionLayer")
+world:addComponent(player, C.Collider, {
+    shape = "rectangle", width = 18, height = 28,
+    layer = { Layers.PLAYER },
+    mask = { Layers.WORLD, Layers.ENEMY },
+})
+```
+
 ## Sistemas y contactos
 
 Los sistemas son opcionales. Un orden habitual de registro es `movementSystem`, `physicsMovementSystem`, `physicsSystem`, `physicsSyncSystem`, `collisionSystem`. El primero integra entidades sin cuerpo rígido. Physics movement aplica `Velocity.x/y` a cuerpos no estáticos solo cuando cambia la orden efectiva, limitada opcionalmente por `Movement.maxSpeed`; la gravedad y los contactos pueden modificar después la velocidad física. La física avanza en pasos fijos de 1/60 s con un acumulador, sin límite de pasos ni interpolación. Sync copia la posición y el ángulo del cuerpo a `Transform`.

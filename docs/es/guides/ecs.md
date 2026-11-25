@@ -92,7 +92,7 @@ end
 return Tutorial
 ```
 
-`createEntity` devuelve un ID numérico. Los componentes son tablas indexadas por ese ID y nombradas mediante `C`; `query` pasa una tabla indexada por nombre de componente, pero el orden de recorrido de las entidades no está especificado. Un sistema es una tabla con funciones normales como `update(world, dt)`, no métodos con dos puntos. `addSystem` llama inmediatamente a su `init(world)` opcional. `PhysicsFactory.create` crea explícitamente el cuerpo y la fixture y asocia los datos de usuario de la fixture con la entidad; los componentes por sí solos no los crean. Tanto el jugador como el suelo necesitan colliders.
+`createEntity` devuelve un ID numérico. Los componentes son tablas indexadas por ese ID y nombradas mediante `C`; `query` pasa una tabla indexada por nombre de componente, pero el orden de recorrido de las entidades no está especificado. `query2(compA, compB, callback)` es la alternativa para dos componentes: pasa ambas tablas directamente y es la que usa `physicsSyncSystem`. Un sistema es una tabla con funciones normales como `update(world, dt)`, no métodos con dos puntos. `addSystem` llama inmediatamente a su `init(world)` opcional. `PhysicsFactory.create` crea explícitamente el cuerpo y la fixture, aplica los filtros `Collider.layer` / `Collider.mask` y asocia los datos de usuario de la fixture con la entidad; los componentes por sí solos no los crean. Tanto el jugador como el suelo necesitan colliders. Las categorías son enteros del 1 al 16: `layer` vale `{ 1 }` por defecto y si se omite `mask` se colisiona con todo.
 
 ## 2. Seguir el orden del frame
 

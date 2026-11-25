@@ -6,7 +6,7 @@ Mueve un marcador con teclas, clics de ratón o un mando, y cuenta pulsaciones y
 
 ## 1. Asignar acciones a dispositivos
 
-Añade estas entradas a la tabla de `game/inputMaps.lua`, conservando las demás acciones:
+Añade estas entradas a la tabla de `game/config/inputMaps.lua`, conservando las demás acciones:
 
 ```lua
 guide_left = {
@@ -30,7 +30,7 @@ guide_count = {
 },
 ```
 
-Cada acción es una tabla con secciones opcionales `keys`, `mouse` y `gamepad`. `keys` contiene nombres de teclas de LÖVE, `mouse` contiene números de botón de LÖVE (`1` izquierdo, `2` derecho, `3` central) y `gamepad` contiene nombres de botón de mando de LÖVE y una tabla opcional `axes` que asigna un nombre de eje a `-1` o `1`. Asegúrate de que `Engine.new` reciba `inputMaps = require("game.inputMaps")` y establece `initialScene = "guideInput"`.
+Cada acción es una tabla con secciones opcionales `keys`, `mouse` y `gamepad`. `keys` contiene nombres de teclas de LÖVE, `mouse` contiene números de botón de LÖVE (`1` izquierdo, `2` derecho, `3` central) y `gamepad` contiene nombres de botón de mando de LÖVE y una tabla opcional `axes` que asigna un nombre de eje a `-1` o `1`. Asegúrate de que `Engine.new` reciba `inputMaps = require("game.config.inputMaps")` y establece `initialScene = "guideInput"`.
 
 ## 2. Crear la escena de entrada
 
@@ -79,7 +79,7 @@ return InputScene
 
 ## 3. Ejecutar y observar
 
-Ejecuta `love .` desde la raíz del proyecto. Mantén pulsada Izquierda/A, Derecha/D, la cruceta o el stick izquierdo para moverte; pulsa y suelta Espacio, un botón del ratón o el botón A del mando para actualizar los contadores. Las direcciones opuestas se cancelan. Los límites suponen el viewport lógico de `320 x 180` del primer proyecto; adáptalos si usas otra resolución. `game/inputMaps.lua` y `game/ecs/systems/playerSystem.lua` del juego de ejemplo también asignan y consultan acciones.
+Ejecuta `love .` desde la raíz del proyecto. Mantén pulsada Izquierda/A, Derecha/D, la cruceta o el stick izquierdo para moverte; pulsa y suelta Espacio, un botón del ratón o el botón A del mando para actualizar los contadores. Las direcciones opuestas se cancelan. Los límites suponen el viewport lógico de `320 x 180` del primer proyecto; adáptalos si usas otra resolución. `game/config/inputMaps.lua` y `game/ecs/systems/playerSystem.lua` del juego de ejemplo también asignan y consultan acciones.
 
 ## Ciclo de vida por frame y flancos
 

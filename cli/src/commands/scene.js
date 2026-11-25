@@ -26,7 +26,7 @@ Crea <name>.lua desde la plantilla de escenas.
 Argumentos:
   name   Identificador Lua de la escena, por ejemplo MyScene.
   ruta   Directorio destino; por defecto ${DEFAULT_SCENES_DIR}
-         (módulo Lua games.scenes).
+         (módulo Lua game.scenes).
 
 Ejemplos:
   astra2d scene:create MyScene

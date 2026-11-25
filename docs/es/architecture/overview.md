@@ -18,7 +18,7 @@ y componentes de renderizado según sus necesidades.
 
 ```text
                           main.lua
-     reenvía load / update / draw / quit / keypressed / keyreleased de LÖVE
+     reenvía load / update / draw / quit de LÖVE
                               │
                               ▼
 ┌───────────────────────────────────────────────────────────────────┐
@@ -116,7 +116,7 @@ consulta rápida y separada de los métodos.
 | [Scene](modules/scene.md) | Define el ciclo de vida y las políticas de actualización y dibujo. |
 | [World](modules/world.md) | Contiene el estado ECS, los sistemas, los eventos y la física. |
 | [ResourceManager](modules/resource-manager.md) | Carga y comparte recursos entre consumidores. |
-| [InputManager](modules/input-manager.md) | Asigna la entrada del teclado a acciones. |
+| [InputManager](modules/input-manager.md) | Asigna acciones de teclado, ratón y mando a nombres de acción. |
 | [AudioManager](modules/audio-manager.md) | Coordina música y efectos de sonido. |
 | [CameraManager](modules/camera-manager.md) | Administra las cámaras y vistas de mundo de una escena. |
 | [Renderizado](modules/rendering.md) | Conecta viewport, cámara, pipeline y renderizadores. |

@@ -10,13 +10,14 @@ Create a folder for the game and copy the engine into it:
 my-game/
   engine/               # complete copy, including engine/lib/
   game/
-    inputMaps.lua
+    config/
+      inputMaps.lua
     scenes/
       hello.lua
   main.lua
 ```
 
-The folder must be named `engine`, because the engine modules import each other with the `engine.` prefix. It must be inside the LÖVE game source directory, next to `main.lua`, including when [packaging a `.love` file](/getting-started/installation#package-the-game).
+The folder must be named `engine`, because the engine modules import each other with the `engine.` prefix. It must be inside the LÖVE game source directory, next to `main.lua`, including when [packaging a `.love` file](/getting-started/installation#package-the-game). Keeping game configuration in `game/config/` matches the demo and the CLI template; `resourceDefinitions.lua` and `collisionLayer.lua` can be added there later as optional files.
 
 ## 1. Configure the entry point
 
@@ -27,7 +28,7 @@ local Engine = require("engine.engine")
 
 local engine = Engine.new({
     initialScene = "hello",
-    inputMaps = require("game.inputMaps"),
+    inputMaps = require("game.config.inputMaps"),
 
     audio = {
         masterVolume = 1.0,
@@ -70,7 +71,7 @@ The required `initialScene` and `inputMaps` are supplied here; `scenesPath` defa
 
 ## 2. Define input actions
 
-Create `game/inputMaps.lua`. Each action is a table with optional `keys`, `mouse`, and `gamepad` sections:
+Create `game/config/inputMaps.lua`. Each action is a table with optional `keys`, `mouse`, and `gamepad` sections:
 
 ```lua
 return {
@@ -203,7 +204,7 @@ manager update, after the current scene has finished updating.
 - **The scene is not found.** Check the `initialScene` identifier and the
   `scenesPath` prefix. Dots map to folder separators.
 
-- **Input does nothing.** Confirm the action name matches `game/inputMaps.lua`.
+- **Input does nothing.** Confirm the action name matches `game/config/inputMaps.lua`.
   The engine installs the LÖVE input callbacks during `Engine:load()`; do not
   forward `love.keypressed` or the other input callbacks yourself.
 - **A transition is expected immediately.** Scene transitions requested during an update are deferred until the end of the scene manager update; do not expect the stack to change halfway through `update`.

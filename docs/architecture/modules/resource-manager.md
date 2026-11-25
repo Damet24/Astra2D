@@ -18,7 +18,7 @@ The default registry in `engine/resources/loaders/loaders.lua` contains:
 | `sound` | `path`: string; `soundType`: `"static"` or `"stream"` | `love.audio.newSource(path, soundType)`; calls `source:release()`. |
 | `font` | `size`: number | `love.graphics.newFont(size)`; calls `font:release()`. The loader does not use a font path. |
 
-For example, `game/resources/definitions.lua` defines `pause_font` as `{ type = "font", size = 18 }`, `music` as a streamed sound and `jump` as a static sound. Paths are LÖVE filesystem paths. Loader assertions check the types shown above; LÖVE can still reject invalid paths, sizes or files.
+For example, `game/config/resourceDefinitions.lua` defines `pause_font` as `{ type = "font", size = 18 }`, `music` as a streamed sound and `jump` as a static sound. Paths are LÖVE filesystem paths. Loader assertions check the types shown above; LÖVE can still reject invalid paths, sizes or files.
 
 ### Image filtering
 

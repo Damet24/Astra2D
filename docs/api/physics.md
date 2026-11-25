@@ -9,6 +9,21 @@ The engine provides a constructor and a rectangle factory, not its own physics o
 
 `Transform.x`, `y` give the body position; `rotation` defaults to 0 radians. `RigidBody.type` defaults to `"dynamic"` (LÖVE also supports `"static"` and `"kinematic"`). `Collider.offsetX`/`offsetY` default to 0, `density` to 1, and `sensor` to false. The factory creates one centered rectangle with those local offsets, sets fixture user data to the entity ID and stores the body as `RigidBody.body`. Adding components alone does not create it.
 
+## Collision layers and filters
+
+`PhysicsFactory.create` applies collision filters through `require("engine.physics.collisionFilter")`; no extra setup is needed. `Collider.layer` is a dense array of the fixture's own categories (integers 1-16, duplicates removed) and defaults to `{ 1 }`. `Collider.mask` is a dense array of categories the fixture **accepts**. If `mask` is `nil`, Box2D's default is kept and the fixture collides with every category; if supplied, the engine inverts it into Box2D's ignore mask, so `mask = {}` collides with nothing. Both fixtures must accept each other's categories for a contact. Invalid types, non-integers, values outside 1-16, or an empty `layer` raise assertions.
+
+`game/config/collisionLayer.lua` lists conventional IDs for the demo (`WORLD = 1`, `PLAYER = 2`, `ENEMY = 3`, `PROJECTILE = 4`, `COLLECTIBLE = 5`, `SENSOR = 6`). This is a plain Lua table, not engine configuration: import it and use the values in colliders as needed.
+
+```lua
+local Layers = require("game.config.collisionLayer")
+world:addComponent(player, C.Collider, {
+    shape = "rectangle", width = 18, height = 28,
+    layer = { Layers.PLAYER },
+    mask = { Layers.WORLD, Layers.ENEMY },
+})
+```
+
 ## Systems and contacts
 
 Systems are opt-in. A typical registration order is `movementSystem`, `physicsMovementSystem`, `physicsSystem`, `physicsSyncSystem`, `collisionSystem`. The first integrates non-rigid entities. Physics movement applies `Velocity.x/y` to non-static bodies only when the effective command changes, optionally capped by `Movement.maxSpeed`; gravity and contacts can subsequently alter physical velocity. Physics advances in fixed 1/60 s steps using an accumulator, with no step cap or interpolation. Sync copies body position and angle to `Transform`.

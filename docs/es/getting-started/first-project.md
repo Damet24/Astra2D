@@ -10,13 +10,14 @@ Crea una carpeta para el juego y copia el motor dentro:
 my-game/
   engine/               # copia completa, incluido engine/lib/
   game/
-    inputMaps.lua
+    config/
+      inputMaps.lua
     scenes/
       hello.lua
   main.lua
 ```
 
-La carpeta debe llamarse `engine`, porque los módulos del motor se importan entre sí con el prefijo `engine.`. Debe estar dentro del directorio fuente del juego LÖVE, junto a `main.lua`, también al [empaquetar un archivo `.love`](/es/getting-started/installation#empaquetar-el-juego).
+La carpeta debe llamarse `engine`, porque los módulos del motor se importan entre sí con el prefijo `engine.`. Debe estar dentro del directorio fuente del juego LÖVE, junto a `main.lua`, también al [empaquetar un archivo `.love`](/es/getting-started/installation#empaquetar-el-juego). Mantener la configuración del juego en `game/config/` coincide con el juego de ejemplo y la plantilla del CLI; `resourceDefinitions.lua` y `collisionLayer.lua` pueden añadirse después como archivos opcionales.
 
 ## 1. Configurar el punto de entrada
 
@@ -29,7 +30,7 @@ local Engine = require("engine.engine")
 
 local engine = Engine.new({
     initialScene = "hello",
-    inputMaps = require("game.inputMaps"),
+    inputMaps = require("game.config.inputMaps"),
 
     audio = {
         masterVolume = 1.0,
@@ -72,7 +73,7 @@ Aquí se proporcionan los campos obligatorios `initialScene` e `inputMaps`; `sce
 
 ## 2. Definir las acciones de entrada
 
-Crea `game/inputMaps.lua`. Cada acción es una tabla con secciones opcionales `keys`, `mouse` y `gamepad`:
+Crea `game/config/inputMaps.lua`. Cada acción es una tabla con secciones opcionales `keys`, `mouse` y `gamepad`:
 
 ```lua
 return {
@@ -207,7 +208,7 @@ actual haya terminado de actualizarse.
 - **No se encuentra la escena.** Revisa el identificador `initialScene` y el
   prefijo `scenesPath`. Los puntos se traducen a separadores de carpeta.
 - **La entrada no hace nada.** Confirma que el nombre de la acción coincide con
-  `game/inputMaps.lua`. El motor instala los callbacks de entrada de LÖVE durante
+  `game/config/inputMaps.lua`. El motor instala los callbacks de entrada de LÖVE durante
   `Engine:load()`; no reenvíes `love.keypressed` ni los demás callbacks de entrada.
 - **Se espera una transición inmediata.** Las transiciones solicitadas durante una actualización se difieren hasta el final de la actualización del gestor de escenas; no esperes que la pila cambie a mitad de `update`.
 - **Los recursos permanecen cargados.** Libera cada consumidor en `onDestroy` con

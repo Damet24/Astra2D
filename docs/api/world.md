@@ -16,6 +16,7 @@ Except where a return is specified, methods return no values. Component names ar
 | `hasComponent(entity, name)` | Returns whether the stored value is non-`nil`. |
 | `removeComponent(entity, name)` | Removes the entry if present; removing `RigidBody` does not destroy its body. |
 | `query(componentNames, callback)` | Iterates live IDs matching all names in the array and calls `callback(entity, components)`, with components keyed by name. An empty array matches all IDs; order is unspecified (`pairs`). Matching uses truthiness, not just non-`nil`. |
+| `query2(compA, compB, callback)` | Fast path for exactly two components. Looks up the two component stores directly; does nothing if either is absent. For each entity in both stores calls `callback(entity, a, b)` with the component tables themselves. There is no "all entities" mode, no keyed result table, and no callback validation. |
 | `onCollisionStarted(entity, callback)` | Registers a callback for contact starts involving the entity; returns an unsubscribe function. See [collision callbacks](#collision-callbacks). |
 | `onCollisionEnded(entity, callback)` | Registers a callback for contact ends involving the entity; returns an unsubscribe function. |
 

@@ -6,14 +6,14 @@ Inicia música en bucle, dispara un efecto y pausa o reinicia la música. Parte 
 
 ## 1. Registrar sonidos y acciones
 
-Crea `game/resources/definitions.lua` y su directorio padre si no existen; comienza el archivo con `return {}`. Añade estas entradas dentro de la tabla devuelta:
+Crea `game/config/resourceDefinitions.lua` y su directorio padre si no existen; comienza el archivo con `return {}`. Añade estas entradas dentro de la tabla devuelta:
 
 ```lua
 guide_music = { type = "sound", path = "game/assets/guide-music.ogg", soundType = "stream" },
 guide_effect = { type = "sound", path = "game/assets/guide-effect.wav", soundType = "static" },
 ```
 
-Añade estas entradas a `game/inputMaps.lua`, conservando las existentes en ambas tablas:
+Añade estas entradas a `game/config/inputMaps.lua`, conservando las existentes en ambas tablas:
 
 ```lua
 guide_effect = { keys = { "space" } },
@@ -21,7 +21,7 @@ guide_music_pause = { keys = { "m" } },
 guide_music_restart = { keys = { "r" } },
 ```
 
-Son fragmentos de entradas de tabla. Asegúrate de que `Engine.new` reciba `resourceDefinitions = require("game.resources.definitions")` e `inputMaps = require("game.inputMaps")`; establece `initialScene = "guideAudio"`. El motor usa por defecto `1.0` en los tres volúmenes de audio. Opcionalmente, sustituye la tabla `audio` existente de la configuración del motor por `audio = { masterVolume = 1.0, musicVolume = 0.5, sfxVolume = 0.8 }`.
+Son fragmentos de entradas de tabla. Asegúrate de que `Engine.new` reciba `resourceDefinitions = require("game.config.resourceDefinitions")` e `inputMaps = require("game.config.inputMaps")`; establece `initialScene = "guideAudio"`. El motor usa por defecto `1.0` en los tres volúmenes de audio. Opcionalmente, sustituye la tabla `audio` existente de la configuración del motor por `audio = { masterVolume = 1.0, musicVolume = 0.5, sfxVolume = 0.8 }`. Para varios sonidos bajo un mismo directorio, las [utilidades de definiciones de recursos](/es/api/resources-utils) ofrecen `addSound`.
 
 ## 2. Crear la escena de audio
 

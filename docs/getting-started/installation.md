@@ -11,11 +11,11 @@ LÖVE includes the Lua runtime. The engine's Lua libraries are bundled in `engin
 
 ## Run the sample project
 
-Clone the compatible `docs/vitepress-setup` branch and run LÖVE with the repository root as the game source:
+Clone the repository and run LÖVE with the repository root as the game source:
 
 ```sh
-git clone --branch docs/vitepress-setup https://github.com/Damet24/lua_engine.git
-cd lua_engine
+git clone https://github.com/Damet24/Astra2D.git
+cd Astra2D
 love .
 ```
 
@@ -23,7 +23,7 @@ Documentation and code should come from the same revision: the branch tip can ch
 
 On Windows you can instead drag the project folder onto the LÖVE executable. If `love` is not on your `PATH`, invoke the installed executable with the project directory as its argument.
 
-The current `main.lua` starts directly in `levels.level01`, not the main menu. The bindings in `game/inputMaps.lua` use the left and right arrows (or the d-pad and left stick) to move, `Space` or gamepad `A` to jump, and `Escape` or gamepad `Start` to pause. `Return`, `Space`, a left click, or gamepad `A` accepts menu entries.
+The current `main.lua` starts in `mainMenu`. The bindings in `game/config/inputMaps.lua` use the left and right arrows (or the d-pad and left stick) to move, `Space` or gamepad `A` to jump, and `Escape` or gamepad `Start` to pause. `Return`, `Space`, a left click, or gamepad `A` accepts menu entries.
 
 ## Use the engine in another project
 
@@ -36,7 +36,8 @@ my-game/                  # LÖVE game source
   main.lua
   engine/                 # complete copy, including engine/lib/
   game/
-    inputMaps.lua
+    config/
+      inputMaps.lua
     scenes/
       hello.lua
 ```

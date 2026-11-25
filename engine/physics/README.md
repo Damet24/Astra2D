@@ -34,6 +34,8 @@ world:addComponent(entity, Components.RigidBody, { type = "dynamic" })
 world:addComponent(entity, Components.Collider, {
     shape = "rectangle", width = 32, height = 32,
     offsetX = 0, offsetY = 0, sensor = false,
+    layer = { 1 }, -- categoria propia; 1 por defecto
+    -- mask = { 1 }, -- categorias aceptadas; si se omite, colisiona con todas
 })
 local body, fixture = PhysicsFactory.create(world, entity)
 ```
@@ -70,5 +72,11 @@ final de la actualizacion. Los contactos que Box2D genere durante esa destruccio
 se entregan en la siguiente actualizacion. `PhysicsDebugSystem.draw(world)`
 puede llamarse manualmente desde `love.draw()` para ver los fixtures.
 
-La integracion de colisiones de Tiled, los filtros, multiples fixtures por
-entidad y la interpolacion visual quedan para una etapa posterior.
+Los filtros de colision ya estan disponibles: `Collider.layer` define las
+categorias propias (enteros del 1 al 16, `{ 1 }` por defecto) y `Collider.mask`
+las categorias aceptadas; si se omite `mask`, se conserva el comportamiento de
+Box2D de colisionar con todo. `PhysicsFactory.create` aplica ambos mediante
+`CollisionFilter.apply`. `game/config/collisionLayer.lua` recoge los nombres del
+juego de ejemplo (WORLD=1, PLAYER=2, ENEMY=3, PROJECTILE=4, COLLECTIBLE=5,
+SENSOR=6). Quedan pendientes la integracion de colisiones de Tiled, multiples
+fixtures por entidad y la interpolacion visual.

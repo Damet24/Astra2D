@@ -47,9 +47,9 @@ Los identificadores siguientes existen en el juego del repositorio. Sin una tabl
 ```lua
 local Engine = require("engine.engine")
 local engine = Engine.new({
-    initialScene = "levels.level01",
-    inputMaps = require("game.inputMaps"),
-    resourceDefinitions = require("game.resources.definitions"),
+    initialScene = "mainMenu",
+    inputMaps = require("game.config.inputMaps"),
+    resourceDefinitions = require("game.config.resourceDefinitions"),
     rendering = { width = 256, height = 240, pixelPerfect = true },
 })
 

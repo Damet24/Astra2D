@@ -18,7 +18,7 @@ El registro predeterminado en `engine/resources/loaders/loaders.lua` contiene:
 | `sound` | `path`: cadena; `soundType`: `"static"` o `"stream"` | `love.audio.newSource(path, soundType)`; llama a `source:release()`. |
 | `font` | `size`: número | `love.graphics.newFont(size)`; llama a `font:release()`. El cargador no utiliza una ruta de fuente. |
 
-Por ejemplo, `game/resources/definitions.lua` define `pause_font` como `{ type = "font", size = 18 }`, `music` como sonido en streaming y `jump` como sonido estático. Las rutas pertenecen al sistema de archivos de LÖVE. Las aserciones de los cargadores comprueban los tipos indicados; LÖVE aún puede rechazar rutas, tamaños o archivos inválidos.
+Por ejemplo, `game/config/resourceDefinitions.lua` define `pause_font` como `{ type = "font", size = 18 }`, `music` como sonido en streaming y `jump` como sonido estático. Las rutas pertenecen al sistema de archivos de LÖVE. Las aserciones de los cargadores comprueban los tipos indicados; LÖVE aún puede rechazar rutas, tamaños o archivos inválidos.
 
 ### Filtrado de imágenes
 

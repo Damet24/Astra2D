@@ -6,7 +6,7 @@ Create a running counter and a pause overlay. Escape pauses and resumes it; the 
 
 ## 1. Configure the action and initial scene
 
-Add `pause = { keys = { "escape" } }` to the table in `game/inputMaps.lua`, keeping any existing actions. In `main.lua`, set `initialScene = "guideLevel"` in `Engine.new` and keep `inputMaps = require("game.inputMaps")`; the engine installs the LÖVE input callbacks during `Engine:load()`.
+Add `pause = { keys = { "escape" } }` to the table in `game/config/inputMaps.lua`, keeping any existing actions. In `main.lua`, set `initialScene = "guideLevel"` in `Engine.new` and keep `inputMaps = require("game.config.inputMaps")`; the engine installs the LÖVE input callbacks during `Engine:load()`.
 
 ## 2. Create the running scene
 
@@ -88,7 +88,7 @@ Here `drawBelow = true` draws the counter underneath, while the default `updateB
 - Transitions are queued: the current update finishes before they are applied. Operations queued by lifecycle hooks during processing wait for another pass. Don't expect an immediate stack change.
 - Missing modules or a module without a `.new(context)` constructor fail when the queued load is processed. The built-in loader ignores the optional transition `dependencies` argument; use `context` for shared services.
 - `clearAndPush` calls `onExit` even on covered scenes; hooks should tolerate repeated exits. Lifecycle errors are not rolled back and can interrupt cleanup.
-- Forward both keyboard callbacks and supply the action mapping; otherwise Escape will not work. The overlay pauses scene updates, not audio globally.
+- Supply the action mapping and do not forward input callbacks; `Engine:load()` installs them. The overlay pauses scene updates, not audio globally.
 
 ## Further reading
 

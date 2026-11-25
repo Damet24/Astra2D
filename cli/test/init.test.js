@@ -38,7 +38,7 @@ test("initProject crea el proyecto en <ruta>/<nombre>", async (t) => {
   );
   assert.ok(fs.statSync(path.join(destination, "main.lua")).isFile());
   const inputMaps = fs.readFileSync(
-    path.join(destination, "game", "inputMaps.lua"),
+    path.join(destination, "game", "config", "inputMaps.lua"),
     "utf8",
   );
   assert.match(inputMaps, /exit = \{/);

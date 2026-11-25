@@ -92,7 +92,7 @@ end
 return Tutorial
 ```
 
-`createEntity` returns a numeric ID. Components are tables indexed by that ID and named using `C`; `query` passes a table keyed by component name, but entity traversal order is unspecified. A system is a table with plain functions such as `update(world, dt)`, not colon methods. `addSystem` immediately calls its optional `init(world)`. `PhysicsFactory.create` explicitly creates the body and fixture and associates fixture user data with the entity; components alone do not create them. Both the player and floor need colliders.
+`createEntity` returns a numeric ID. Components are tables indexed by that ID and named using `C`; `query` passes a table keyed by component name, but entity traversal order is unspecified. `query2(compA, compB, callback)` is the two-component alternative: it passes both component tables directly and is what `physicsSyncSystem` uses. A system is a table with plain functions such as `update(world, dt)`, not colon methods. `addSystem` immediately calls its optional `init(world)`. `PhysicsFactory.create` explicitly creates the body and fixture, applies `Collider.layer` / `Collider.mask` filters, and associates fixture user data with the entity; components alone do not create them. Both the player and floor need colliders. Categories are integers 1-16: `layer` defaults to `{ 1 }`, while an omitted `mask` collides with everything.
 
 ## 2. Follow the frame order
 

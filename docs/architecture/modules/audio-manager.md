@@ -10,7 +10,7 @@
 
 `AudioManager.new(config)` requires `config.resourceManager`. It copies `masterVolume`, `musicVolume` and `sfxVolume` from the configuration. When constructed by `Engine.new`, these come from `audio` and each defaults to `1.0`; direct construction supplies no volume defaults, so provide numbers for all three. No volume validation, clamping or volume-setting API is implemented. A new music source receives `masterVolume * musicVolume`; a new effect clone receives `masterVolume * sfxVolume`. Changing these fields does not update sources already playing.
 
-Resource IDs must resolve to compatible LÖVE audio sources. The default sound loader requires a string `path` and `soundType = "static"` or `"stream"`. In `game/resources/definitions.lua`, `music` uses `stream`, while `jump` uses `static`. `playMusic(id, { loop = true })` enables looping only when `loop` is exactly `true`; omitted or other values mean no loop when starting a new track.
+Resource IDs must resolve to compatible LÖVE audio sources. The default sound loader requires a string `path` and `soundType = "static"` or `"stream"`. In `game/config/resourceDefinitions.lua`, `music` uses `stream`, while `jump` uses `static`. `playMusic(id, { loop = true })` enables looping only when `loop` is exactly `true`; omitted or other values mean no loop when starting a new track.
 
 ## Public API
 
