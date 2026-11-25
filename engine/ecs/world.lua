@@ -105,6 +105,20 @@ function World:query(componentNames, callback)
 	end
 end
 
+function World:query2(compA, compB, callback)
+    local storeA = self.components[compA]
+    local storeB = self.components[compB]
+
+    if not storeA or not storeB then return end
+
+    for entity, a in pairs(storeA) do
+        local b = storeB[entity]
+        if b then
+            callback(entity, a, b)
+        end
+    end
+end
+
 -- SYSTEM MANAGEMENT
 
 function World:addSystem(system)
