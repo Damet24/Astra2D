@@ -1,4 +1,5 @@
 local Components = require("engine.ecs.component")
+local CollisionFilter = require("engine.physics.collisionFilter")
 
 local PhysicsFactory = {}
 
@@ -14,7 +15,8 @@ function PhysicsFactory.create(world, entity)
 	local body = love.physics.newBody(world.physics, transform.x, transform.y, rigidBody.type or "dynamic")
 	body:setAngle(transform.rotation or 0)
 	local fixture = love.physics.newFixture(body, shape, collider.density or 1)
-	fixture:setSensor(collider.sensor or false)
+    fixture:setSensor(collider.sensor or false)
+	CollisionFilter.apply(fixture, collider)
 	fixture:setUserData(entity)
 	rigidBody.body = body
 	return body, fixture
