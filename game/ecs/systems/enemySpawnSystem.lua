@@ -1,5 +1,5 @@
 local Components = require("engine.ecs.component")
-local PhysicsFactory = require("engine.physics.physics_factory")
+local PhysicsFactory = require("engine.physics.PhysicsFactory")
 
 local EnemySpawnSystem = {}
 

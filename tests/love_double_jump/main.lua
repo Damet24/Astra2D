@@ -2,7 +2,7 @@ package.path = assert(os.getenv("ENGINE_TEST_ROOT")) .. "/?.lua;" .. package.pat
 
 local World = require("engine.ecs.world")
 local Components = require("engine.ecs.component")
-local PhysicsFactory = require("engine.physics.physics_factory")
+local PhysicsFactory = require("engine.physics.PhysicsFactory")
 local PhysicsMovementSystem = require("engine.ecs.systems.physicsMovementSystem")
 local PhysicsSystem = require("engine.ecs.systems.physicsSystem")
 local CollisionSystem = require("engine.ecs.systems.collisionSystem")

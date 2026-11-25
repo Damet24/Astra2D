@@ -1,4 +1,4 @@
-local RenderPipeline = require("engine.graphics.render_pipeline")
+local RenderPipeline = require("engine.graphics.RenderPipeline")
 local RenderSystem = require("engine.ecs.systems.renderSystem")
 local TilemapRender = require("engine.tilemap.tilemaprender")
 

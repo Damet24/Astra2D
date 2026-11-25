@@ -20,7 +20,7 @@ love = {
 		end,
 	},
 }
-package.loaded["engine.physics.physics_world"] = { new = function() return {} end }
+package.loaded["engine.physics.PhysicsWorld"] = { new = function() return {} end }
 package.loaded["engine.ecs.systems.collisionSystem"] = {}
 
 local Level = require("game.scenes.levels.level")

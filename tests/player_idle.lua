@@ -12,11 +12,11 @@ love = {
 	keyboard = { isDown = function() return false end },
 }
 
-package.loaded["engine.physics.physics_world"] = { new = function() return {} end }
+package.loaded["engine.physics.PhysicsWorld"] = { new = function() return {} end }
 for _, name in ipairs({ "physicsSystem", "physicsSyncSystem", "collisionSystem" }) do
 	package.loaded["engine.ecs.systems." .. name] = {}
 end
-package.loaded["engine.physics.physics_factory"] = {
+package.loaded["engine.physics.PhysicsFactory"] = {
 	create = function(world, entity)
 		local body = {
 			velocityX = 0, velocityY = 0,

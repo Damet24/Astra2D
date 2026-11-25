@@ -3,7 +3,7 @@ package.path = assert(os.getenv("ENGINE_TEST_ROOT")) .. "/?.lua;" .. package.pat
 local Scene = require("engine.scene.scene")
 local SceneManager = require("engine.scene.sceneManager")
 local CameraManager = require("engine.camera.cameraManager")
-local RenderPipeline = require("engine.graphics.render_pipeline")
+local RenderPipeline = require("engine.graphics.RenderPipeline")
 local viewport = require("engine.lib.shove.shove")
 
 local TestScene = {}

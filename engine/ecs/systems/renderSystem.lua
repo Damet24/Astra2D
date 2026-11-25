@@ -1,5 +1,5 @@
 local Components = require("engine.ecs.component")
-local RenderPipeline = require("engine.graphics.render_pipeline")
+local RenderPipeline = require("engine.graphics.RenderPipeline")
 
 local RenderSystem = {}
 

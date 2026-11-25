@@ -25,7 +25,7 @@ Para crear un cuerpo, agrega los componentes y llama a la fabrica:
 
 ```lua
 local Components = require("engine.ecs.component")
-local PhysicsFactory = require("engine.physics.physics_factory")
+local PhysicsFactory = require("engine.physics.PhysicsFactory")
 local entity = world:createEntity()
 world:addComponent(entity, Components.Transform, { x = 100, y = 100, rotation = 0 })
 world:addComponent(entity, Components.Velocity, { x = 100, y = 0 })

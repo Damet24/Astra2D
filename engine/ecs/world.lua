@@ -1,5 +1,5 @@
 local EventManager = require("engine.core.events")
-local PhysicsWorld = require("engine.physics.physics_world")
+local PhysicsWorld = require("engine.physics.PhysicsWorld")
 local Components = require("engine.ecs.component")
 
 local World = {}
